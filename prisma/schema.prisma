@@ -1,0 +1,159 @@
+// Data Source Name
+
+generator client {
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = 5
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:dev.db"
+}
+
+// Definição do modelo de usuário
+model User {
+  id       String  @id @default(uuid())
+  name     String
+  username String  @unique
+  email    String  @unique
+  password String
+  bio      String?
+
+  photo  File?   @relation(fields: [fileId], references: [id]) // foto de perfil
+  fileId String?
+
+  barn Barn? //armazém
+
+  followers Follows[] @relation("following")
+  following Follows[] @relation("follower")
+
+  recipes Recipe[] // receitas
+
+  usersDive UsersDive[] // butecos que o usuário faz parte
+
+  ownersDive Dive[] // butecos que o usuário é admin
+
+  reactions Reaction[] //reações a receitas
+
+  @@map("users")
+}
+
+model Follows {
+  follower    User   @relation("follower", fields: [followerId], references: [id])
+  followerId  String
+  following   User   @relation("following", fields: [followingId], references: [id])
+  followingId String
+
+  @@id([followerId, followingId])
+}
+
+// Definição do modelo de buteco
+model Dive {
+  id          String @id @default(uuid())
+  name        String @unique
+  description String
+
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String
+
+  members UsersDive[]
+  recipe  Recipe[]
+
+  photo  File?   @relation(fields: [fileId], references: [id])
+  fileId String?
+}
+
+// relação many to many 
+model UsersDive {
+  id String @id @default(uuid())
+
+  userId String
+  diveId String
+
+  user User @relation(fields: [userId], references: [id])
+  dive Dive @relation(fields: [diveId], references: [id])
+
+  @@unique([userId, diveId])
+}
+
+// Definição do modelo de receita
+model Recipe {
+  id String @id @default(uuid())
+
+  name        String
+  description String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  barn   Barn?   @relation(fields: [barnId], references: [id]) // armazém
+  barnId String?
+
+  dive   Dive?   @relation(fields: [diveId], references: [id]) // buteco que pode ter relação
+  diveId String?
+
+  photo  File?   @relation(fields: [fileId], references: [id])
+  fileId String?
+
+  reactions Reaction[]
+
+  ingredients Ingredients[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
+model Ingredients {
+  id String @id @default(uuid())
+
+  name   String
+  amount Int
+  unit   String
+
+  recipe   Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
+}
+
+model Reaction {
+  id   Int    @id @default(autoincrement())
+  type String // bão, mió de bão ou água na boca
+
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  recipeId String
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+// Definição do modelo de armazém
+model Barn {
+  id String @id @default(uuid())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+
+  recipes Recipe[]
+}
+
+// Definição do modelo de arquvios (imagens)
+model File {
+  id   String @id @default(uuid())
+  name String
+  path String
+
+  user User[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  recipe     Recipe[]
+  dive       Dive[]
+
+  @@map("files")
+}
+
+model IngredientsUnit {
+  id   String @id @default(uuid())
+  name String @unique
+}
