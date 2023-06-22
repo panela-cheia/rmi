@@ -1,19 +1,12 @@
-import threading
-import asyncio
+import Pyro5.server
+import Pyro5.socketutil
 
-from shared.infra.sockets.server import Server
+Pyro5.config.SERVERTYPE = "thread"
 
-async def start_server(server:Server,con):
-    await server.start(con)
-
-def start_async_server(server:Server,con):
-    asyncio.run(start_server(server=server,con=con))
+# adapters
+from adapters.users.user_login_login_adapter import UserLoginAdapter
 
 if __name__ == "__main__":
-    server = Server()
-
-    while True:
-        con, client = server.tcp.accept()
-        print("Conectado por", client)
-        threading.Thread(target=start_async_server, args=(server,con,)).start()
-        print("Conectado com o client foi finalizada!", client)
+    Pyro5.server.serve({
+        UserLoginAdapter:"adapters.user_login_login_adapter"
+    },use_ns=True)

@@ -3,6 +3,9 @@ MAIN = src/main.py
 all:
 	python3 -B $(MAIN)
 
+pyro:
+	pyro5-ns -n localhost
+
 venv:
 	python3 -m venv . && . bin/activate && pip3 install -r requirements.txt && prisma generate
 

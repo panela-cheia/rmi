@@ -48,10 +48,10 @@ class UserRepository:
 
         return users
 
-    async def findByEmail(self, email):
-        await prisma.connect()
+    def findByEmail(self, email):
+        prisma.connect()
 
-        user = await prisma.user.find_unique(
+        user = prisma.user.find_unique(
             where={
                 'email': email
             },
@@ -60,7 +60,7 @@ class UserRepository:
             }
         )
 
-        await prisma.disconnect()
+        prisma.disconnect()
 
         return user
 
