@@ -33,33 +33,33 @@ aux4 = {
 aux5 = {
     "topic": "@user/list_others_user",
     "body": {
-        "id": "6809d450-68e0-479f-91e1-7d2d5c52ad90"
+        "id": "b5764f89-c00b-4b2d-b45f-f0782e14a99f"
     }
 }
 
 aux6 = {
     "topic": "@user/follow_user",
     "body": {
-        "user_id": "823e3881-bda1-4f2a-9593-83c8d7fd0044",
-        "follow_id": "5ca07281-0e46-4abc-8f1f-54b61ca27631"
+        "user_id": "6809d450-68e0-479f-91e1-7d2d5c52ad90",
+        "follow_id": "b5764f89-c00b-4b2d-b45f-f0782e14a99f"
     }
 }
 
 aux7 = {
     "topic": "@user/unfollow_user",
     "body": {
-        "user_id": "5ca07281-0e46-4abc-8f1f-54b61ca27631",
-        "unfollow_id": "f57255d9-afc0-478e-949b-0301f0bc05d0"
+        "user_id": "6809d450-68e0-479f-91e1-7d2d5c52ad90",
+        "unfollow_id": "b5764f89-c00b-4b2d-b45f-f0782e14a99f"
     }
 }
 
 aux8 = {
     "topic": "@user/update_user",
     "body": {
-        "id": "75621072-e6b5-49ae-a5ff-424707d534b2",
+        "id": "6809d450-68e0-479f-91e1-7d2d5c52ad90",
         "bio": "amo comer!",
-        "name": "Vinicius Mendes",
-        "username": "@vinicmendes"
+        "name": "João de Barro",
+        "username": "@joaodebarro"
     }
 }
 
