@@ -6,15 +6,15 @@ class CreateIngredientsUnitUseCase:
     def __init__(self,repository:IngredientsUnitRepository) -> None:
         self.repository = repository
 
-    async def execute(self,name:str):
+    def execute(self,name:str):
 
         try:
-            verifyIfUnitAlreadyBeenRegistered = await self.repository.findByName(name=name)
+            verifyIfUnitAlreadyBeenRegistered = self.repository.findByName(name=name)
 
             if verifyIfUnitAlreadyBeenRegistered:
                 return { "error":"This name already been registered!" }
 
-            unit =  await self.repository.create(name=name)
+            unit =  self.repository.create(name=name)
 
             return ingredientsUnitSerializator(ingredientsUnit=unit)
         except (ValueError):

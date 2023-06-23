@@ -6,14 +6,15 @@ class ListIngredientsUnitUseCase:
     def __init__(self,repository:IngredientsUnitRepository) -> None:
         self.repository = repository
 
-    async def execute(self):
+    def execute(self):
         try:
-            units = await self.repository.findAll()
+            units = self.repository.findAll()
 
             data = []
 
             for unit in units:
-                data.append(ingredientsUnitSerializator(ingredientsUnit=unit))
+
+                data.append(ingredientsUnitSerializator(ingredientsUnit={"id":unit.id,"name":unit.name}))
 
             return data
         except (ValueError):
