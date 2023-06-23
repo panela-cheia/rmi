@@ -173,7 +173,16 @@ class UserRepository:
 
         session = self.orm.get_session()
 
-        users = session.query(User).filter(User.id != id).all()
+        users = session.query(User).filter(User.id != id).options(
+            joinedload('barn'),
+            joinedload('followers'),
+            joinedload('following'),
+            joinedload('owners_dive'),
+            joinedload('photo'),
+            joinedload('reactions'),
+            joinedload('recipes'),
+            joinedload('users_dive')
+        ).all()
 
         session.close()
 
