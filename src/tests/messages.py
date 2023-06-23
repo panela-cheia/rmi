@@ -1,9 +1,9 @@
 aux1 = {
     "topic": "@user/create_user",
     "body": {
-        "name": "João da Silva",
-        "username": "@joaodasilva",
-        "email": "joao.da.silva@gmail.com",
+        "name": "PAPA",
+        "username": "@moviepapa",
+        "email": "papa@gmail.com",
         "password": "12345678"
     }
 }
@@ -11,7 +11,7 @@ aux1 = {
 aux2 = {
     "topic": "@user/login_with_email_user",
     "body": {
-        "email": "teste@gmail.com",
+        "email": "joao.da.silva@gmail.com",
         "password": "12345678"
     }
 }
@@ -19,7 +19,7 @@ aux2 = {
 aux3 = {
     "topic": "@user/login_with_username_user",
     "body": {
-        "username": "@teste",
+        "username": "@joaodasilva",
         "password": "12345678"
     }
 }
@@ -33,7 +33,7 @@ aux4 = {
 aux5 = {
     "topic": "@user/list_others_user",
     "body": {
-        "id": "f57255d9-afc0-478e-949b-0301f0bc05d0"
+        "id": "6809d450-68e0-479f-91e1-7d2d5c52ad90"
     }
 }
 

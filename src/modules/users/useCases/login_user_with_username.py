@@ -13,9 +13,9 @@ class LoginUserWithUsernameUseCase:
     def __init__(self,userRepository:UserRepository) -> None:
         self.userRepository = userRepository
 
-    async def execute(self, username,password):
+    def execute(self, username,password):
         try:
-            user = await self.userRepository.findByUsername(username)
+            user = self.userRepository.findByUsername(username)
 
             if not user:
                 raise CustomError("User not exists")    

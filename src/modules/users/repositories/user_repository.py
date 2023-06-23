@@ -18,9 +18,16 @@ class UserRepository:
         session.add(barn)
         session.commit()
 
+        user_dict = {
+            'id': user.id,
+            'name': user.name,
+            'username': user.username,
+            'email': user.email
+        }
+
         session.close()
 
-        return user
+        return user_dict
 
     def findAll(self):
         session = self.orm.get_session()
