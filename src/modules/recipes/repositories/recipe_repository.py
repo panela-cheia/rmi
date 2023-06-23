@@ -1,5 +1,6 @@
-from save.schema import Recipe, Ingredients, Reaction
-from save.orm import ORM
+from database.schema.schema import Recipe, Ingredients, Reaction
+from database.infra.orm import ORM
+
 from src.modules.recipes.dtos.create_recipe_dto import CreateRecipeDTO
 
 from sqlalchemy.orm import joinedload
@@ -14,9 +15,9 @@ class RecipeRepository:
         recipe = Recipe(
             name=data.name,
             description=data.description,
-            userId=data.userId,
-            diveId=data.diveId,
-            fileId=data.fileId
+            user_id=data.userId,
+            dive_id=data.diveId,
+            photo_id=data.fileId
         )
 
         ingredients = [
@@ -57,13 +58,13 @@ class RecipeRepository:
         session = self.orm.get_session()
         
         existing_reaction = session.query(Reaction).\
-            filter(Reaction.recipeId == recipe_id, Reaction.userId == user_id).first()
+            filter(Reaction.recipe_id == recipe_id, Reaction.user_id == user_id).first()
 
         return existing_reaction
 
     def reaction(self, recipe_id: str, type: str, user_id: str):
         session = self.orm.get_session()
-        reaction = Reaction(type=type, recipeId=recipe_id, userId=user_id)
+        reaction = Reaction(type=type, recipe_id=recipe_id, user_id=user_id)
 
         session.add(reaction)
         session.commit()
@@ -71,14 +72,16 @@ class RecipeRepository:
 
         return reaction
 
-    def updateReaction(self, id: str, type: str):
+    def updateReaction(self, id: int, type: str):
         session = self.orm.get_session()
         reaction = session.query(Reaction).get(id)
-        reaction.type = type
 
-        session.commit()
-
-        return reaction
+        if reaction:
+            reaction.type = type
+            session.commit()
+            return reaction
+        else:
+            return None
 
     def getReactionQuantities(self, recipe_id: str):
         session = self.orm.get_session()
@@ -90,7 +93,7 @@ class RecipeRepository:
         }
 
         try:
-            recipe_reactions = session.query(Reaction).filter(Reaction.recipeId == recipe_id).all()
+            recipe_reactions = session.query(Reaction).filter(Reaction.recipe_id == recipe_id).all()
 
             for reaction in recipe_reactions:
                 if reaction.type in reaction_quantities:

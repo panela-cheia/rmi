@@ -1,9 +1,8 @@
-from save.schema import Barn, Recipe
-from save.orm import ORM
+from database.schema.schema import Barn, Recipe
+from database.infra.orm import ORM
 
 from modules.barn.dtos.save_recipe_dto import BarnSaveRecipeDTO
 from modules.barn.dtos.remove_recipe_dto import RemoveRecipeDTO
-
 
 class BarnRepository:
     def __init__(self):

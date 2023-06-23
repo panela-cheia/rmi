@@ -9,9 +9,16 @@ sys.path.append(parent_dir)
 
 from modules.users.repositories.user_repository import UserRepository
 from modules.files.repositories.files_repository import FilesRepository
+from modules.recipes.repositories.recipe_repository import RecipeRepository
+
+from modules.recipes.dtos.create_recipe_dto import CreateRecipeDTO
+
+# utils
+from utils.convert_list_convert_to_ingredient_dtos import convert_list_to_ingredient_dtos
 
 userRepository = UserRepository()
 filesRepository = FilesRepository()
+recipeRepository = RecipeRepository()
 
 '''
 1) create
@@ -147,4 +154,97 @@ File
 
 1) create
 create = filesRepository.create(name="a",path="a")
-print(create)'''
+print(create)
+
+2) delete
+
+delete = filesRepository.delete(id="59bd4e9d-e2cf-4c65-ac11-6b1bb830f4d4")
+print(delete)
+
+3) findById
+
+findById = filesRepository.findById(id="52ab7b64-2c87-406d-bff7-ec336bd2b538")
+print(findById)
+'''
+
+
+'''
+Recipe
+
+1) Create
+
+body = {
+"name": "dive-2",
+        "description": "testar dive",
+        "userId": "7e43f882-b014-43a6-8d9d-54500c3b4fc6",
+        "fileId": "5083be3b-7a89-41dc-8dee-0c34b0711813",
+        "ingredients": [
+            {"name": "Ingredient 1", "amount": 1, "unit": "cup"},
+            {"name": "Ingredient 2", "amount": 2, "unit": "teaspoon"},
+            {"name": "Ingredient 3", "amount": 3, "unit": "gram"},
+        ]
+}
+
+createRecipeDTO = CreateRecipeDTO(
+    name=body["name"],
+    description=body["description"],
+    ingredients=convert_list_to_ingredient_dtos(data=body["ingredients"]),
+    userId=body["userId"],
+    fileId=body["fileId"],
+    diveId=body["diveId"] if "diveId" in body else None
+)
+
+create = recipeRepository.create(data=createRecipeDTO)
+print(create)
+
+2) findAll
+
+
+recipes = recipeRepository.findAll()
+
+for recipe in recipes:
+    print(recipe.__dict__)
+    for ingredient in recipe.ingredients:
+        print(ingredient.__dict__)
+
+
+3) verify_existing_reaction
+
+verify_existing_reaction = recipeRepository.verify_existing_reaction(
+    user_id="5ea14993-ec3b-4ec3-8e7f-5c8e2f77b04b",
+    recipe_id="3048e9a3-c27b-4dcf-84ef-2e2f42bd188c",
+)
+
+print(verify_existing_reaction)
+
+
+4) reaction
+
+reaction = recipeRepository.reaction(
+    user_id="59ef9f90-f7fe-4f8e-ad65-2a85af97aa2d",
+    recipe_id="3048e9a3-c27b-4dcf-84ef-2e2f42bd188c",
+    type="bão"
+)
+
+print(reaction)
+
+5) updateReaction
+
+updateReaction = recipeRepository.updateReaction(
+    id=1,
+    type="bão"
+)
+
+print(updateReaction)
+
+6) getReactionQuantities
+
+getReactionQuantities = recipeRepository.getReactionQuantities(
+    recipe_id="3048e9a3-c27b-4dcf-84ef-2e2f42bd188c"
+)
+
+print(getReactionQuantities)
+
+'''
+
+
