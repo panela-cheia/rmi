@@ -24,13 +24,13 @@ class BarnRepository:
 
     def findAll(self, barnId: str):
         session = self.orm.get_session()
-        barn = session.query(Barn).filter_by(id=barnId).options(joinedload('recipes').joinedload(
-            'ingredients'), joinedload('recipes').joinedload('photo')).first()
+        barn = session.query(Barn).filter_by(id=barnId).options(
+            joinedload('recipes').joinedload('ingredients'),
+            joinedload('recipes').joinedload('photo')
+        ).first()
 
         if barn:
-            recipes = barn.recipes
-
-            return {"id": barn.id, "user_id": barn.user_id, "recipes": recipes}
+            return barn
         else:
             return None
 
