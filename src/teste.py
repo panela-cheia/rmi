@@ -12,11 +12,15 @@ from modules.files.repositories.files_repository import FilesRepository
 from modules.recipes.repositories.recipe_repository import RecipeRepository
 from modules.barn.repositories.barn_repository import BarnRepository
 from modules.ingredients_unit.repositories.ingredients_unit_repository import IngredientsUnitRepository
+from modules.dive.repositories.dive_repository import DiveRepository
 
 from modules.recipes.dtos.create_recipe_dto import CreateRecipeDTO
 
 from modules.barn.dtos.save_recipe_dto import BarnSaveRecipeDTO
 from modules.barn.dtos.remove_recipe_dto import RemoveRecipeDTO
+
+from modules.dive.dtos.create_dive_dto import CreateDiveDTO
+from modules.dive.dtos.update_dive_dto import UpdateDiveDTO
 
 # utils
 from utils.convert_list_convert_to_ingredient_dtos import convert_list_to_ingredient_dtos
@@ -26,6 +30,7 @@ filesRepository = FilesRepository()
 recipeRepository = RecipeRepository()
 barnRepository = BarnRepository()
 ingredientsUnitRepository = IngredientsUnitRepository()
+diveRepository = DiveRepository()
 
 '''
 1) create
@@ -385,4 +390,87 @@ print(findById.__dict__)
 
 '''
 Dive
+
+1) create
+
+body = {
+    "name": "dive-3",
+    "description": "testar dive",
+    "fileId": "5083be3b-7a89-41dc-8dee-0c34b0711813",
+    "userId": "7e43f882-b014-43a6-8d9d-54500c3b4fc6",
+}
+creatediveDTO = CreateDiveDTO(
+    name=body["name"],
+    description=body["description"],
+    userId=body["userId"],
+    fileId=body["fileId"],
+)
+
+create = diveRepository.create(data=creatediveDTO)
+print(create.id)
+
+2) findById
+findById= diveRepository.findById(id="7e43f882-b014-43a6-8d9d-54500c3b4fc6")
+print(findById)
+
+3) findDiveById
+
+findDiveById= diveRepository.findDiveById(dive_id="95d5192b-82d3-4af2-aa47-6f4fd0ebf4ae")
+print(findDiveById)
+
+4) findDiveByName
+
+findDiveByName = diveRepository.findDiveByName(name="dive-3")
+print(findDiveByName)
+
+5) verifyEntry
+
+verifyEntry = diveRepository.verifyEntry(user="59ef9f90-f7fe-4f8e-ad65-2a85af97aa2d",dive="95d5192b-82d3-4af2-aa47-6f4fd0ebf4ae")
+print(verifyEntry)
+
+6) enterDive
+
+enterDive = diveRepository.enterDive(user_id="59ef9f90-f7fe-4f8e-ad65-2a85af97aa2d",dive_id="95d5192b-82d3-4af2-aa47-6f4fd0ebf4ae")
+print(enterDive)
+
+7) exitDive
+
+exitDive = diveRepository.exitDive(user_id="59ef9f90-f7fe-4f8e-ad65-2a85af97aa2d",dive_id="95d5192b-82d3-4af2-aa47-6f4fd0ebf4ae")
+print(exitDive)
+
+8) update
+
+body =  {
+        "id": "95d5192b-82d3-4af2-aa47-6f4fd0ebf4ae",
+        "name": "Açai!",
+        "description":"teste"
+    }
+
+dto = UpdateDiveDTO(
+                id=body["id"],
+                description=body["description"] if "description" in body else None,
+                fileId=body["fileId"] if "fileId" in body else None,
+                name=body["name"] if "name" in body else None,
+            )
+update = diveRepository.update(updateDiveDTO=dto)
+print(update)
+
+9) findAll
+
+findAll = diveRepository.findAll(name="d")
+for find in findAll:
+    print(find.__dict__)
+
+10) updateDiveOwner
+
+updateDiveOwner = diveRepository.updateDiveOwner(dive_id="95d5192b-82d3-4af2-aa47-6f4fd0ebf4ae",new_owner="59ef9f90-f7fe-4f8e-ad65-2a85af97aa2d")
+print(updateDiveOwner.__dict__)
+
+11) findUserDive
+
+findUserDive = diveRepository.findUserDive(user_id="95d5192b-82d3-4af2-aa47-6f4fd0ebf4ae")
+for find in findUserDive:
+    print(find.__dict__)
+
 '''
+

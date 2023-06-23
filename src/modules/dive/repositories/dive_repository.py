@@ -1,8 +1,9 @@
-from save.orm import ORM
+from database.infra.orm import ORM
 from modules.dive.dtos.create_dive_dto import CreateDiveDTO
 from modules.dive.dtos.update_dive_dto import UpdateDiveDTO
-from save.schema import Dive, User, UsersDive
+from database.schema.schema import Dive, User, UsersDive
 
+from sqlalchemy.orm import joinedload
 
 class DiveRepository:
     def __init__(self):
@@ -14,8 +15,8 @@ class DiveRepository:
         dive = Dive(
             name=data.name,
             description=data.description,
-            fileId=data.fileId,
-            ownerId=data.userId
+            photo_id=data.fileId,
+            owner_id=data.userId
         )
 
         session.add(dive)
@@ -43,13 +44,13 @@ class DiveRepository:
 
     def verifyEntry(self, user: str, dive: str) -> bool:
         session = self.orm.get_session()
-        values = session.query(UsersDive).filter_by(userId=user, diveId=dive).first()
+        values = session.query(UsersDive).filter_by(user_id=user, dive_id=dive).first()
 
         return values is not None
 
     def enterDive(self, user_id: str, dive_id: str):
         session = self.orm.get_session()
-        user_dive = UsersDive(userId=user_id, diveId=dive_id)
+        user_dive = UsersDive(user_id=user_id, dive_id=dive_id)
 
         session.add(user_dive)
         session.commit()
@@ -58,14 +59,14 @@ class DiveRepository:
 
     def exitDive(self, user_id: str, dive_id: str):
         session = self.orm.get_session()
-        session.query(UsersDive).filter_by(userId=user_id, diveId=dive_id).delete()
+        session.query(UsersDive).filter_by(user_id=user_id, dive_id=dive_id).delete()
         session.commit()
 
     def update(self, updateDiveDTO: UpdateDiveDTO):
         session = self.orm.get_session()
         dive = session.query(Dive).filter_by(id=updateDiveDTO.id).first()
         dive.description = updateDiveDTO.description
-        dive.fileId = updateDiveDTO.fileId
+        dive.photo_id = updateDiveDTO.fileId if "fileId" in updateDiveDTO else dive.photo_id
         dive.name = updateDiveDTO.name
 
         session.commit()
@@ -74,7 +75,12 @@ class DiveRepository:
 
     def findAll(self, name: str):
         session = self.orm.get_session()
-        dives = session.query(Dive).filter(Dive.name.contains(name)).all()
+        dives = session.query(Dive).filter(Dive.name.contains(name)).options(
+            joinedload('owner'),
+            joinedload('photo'),
+            joinedload('recipe'),
+            joinedload('members')
+        ).all()
 
         return dives
 
@@ -89,6 +95,6 @@ class DiveRepository:
 
     def findUserDive(self, user_id):
         session = self.orm.get_session()
-        dives = session.query(UsersDive).filter_by(userId=user_id).all()
+        dives = session.query(UsersDive).filter_by(user_id=user_id).all()
 
         return dives
