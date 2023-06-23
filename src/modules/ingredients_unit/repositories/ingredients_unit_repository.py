@@ -6,16 +6,21 @@ class IngredientsUnitRepository:
     def __init__(self):
         self.orm = ORM()
 
-    def create(self, name:str):
+    def create(self, name: str):
         session = self.orm.get_session()
 
         unit = IngredientsUnit(name=name)
         session.add(unit)
         session.commit()
 
+        unit_dict = {
+            'id': unit.id,
+            'name': unit.name
+        }
+
         session.close()
 
-        return unit
+        return unit_dict
 
     def delete(self, id):
         session = self.orm.get_session()

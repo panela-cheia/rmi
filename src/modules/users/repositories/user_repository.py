@@ -119,13 +119,19 @@ class UserRepository:
         user = session.query(User).filter(User.id == id).first()
         photo = session.query(File).filter(File.id == photo_id).first()
 
-        user.photo = photo
-        session.commit()
+        if user:
+            # Atualiza a foto existente ou atribui uma nova foto
+            user.photo = photo
+
+            session.merge(user)
+            session.commit()
+
+            # Recarrega o usuário da sessão para refletir as alterações
+            session.refresh(user)
 
         session.close()
 
         return user
-
 
     def delete(self, id):
 

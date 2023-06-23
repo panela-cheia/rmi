@@ -16,7 +16,7 @@ class CreateRecipeUseCase:
             data = {
                 "ok":"recipe created successfully!"
             }
-            print(recipe.__dict__)
-            # return data
+
+            return data
         except (ValueError):
             return {"error":ValueError}
