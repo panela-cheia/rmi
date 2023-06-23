@@ -301,7 +301,7 @@ class Bootstrap:
 
         elif topic == Topics.RECIPE_SEARCH.value:
             recipes = searchRecipesUseCase.execute(name=body["name"])
-            logger.info("{topic} - {response}",topic=Topics.RECIPE_SEARCH.value,response=recipes)
+            logger.info("{topic} - {response}",topic=Topics.RECIPE_SEARCH.value,response=json.dumps(recipes,indent=4,ensure_ascii=False))
 
             answer = recipes
 

@@ -6,8 +6,6 @@ timezone = pytz.timezone('America/Sao_Paulo')
 def recipeSerializator(recipe, reactions):
     repository = repo()
     user= repository.findById(recipe.user_id)
-    
-    
 
     recipe_formatted = {
         "id": recipe.id,
@@ -18,17 +16,21 @@ def recipeSerializator(recipe, reactions):
             "name": user.name,
             "username": user.username,
             "photo": {
-                "id": recipe.user.__dict__["photo"].id,
-                "name": recipe.user.__dict__["photo"].name,
-                "path": recipe.user.__dict__["photo"].path
-            } if recipe.user.__dict__["photo"] else None
+                "id": recipe.user.photo.id,
+                "name": recipe.user.photo.name,
+                "path": recipe.user.photo.path
+            } if recipe.user.photo else None
         },
         "photo": {
-            "id": recipe.photo.__dict__["id"],
-            "name": recipe.photo.__dict__["name"],
-            "path": recipe.photo.__dict__["path"]
-        } if recipe.photo.__dict__ else None,
-        "ingredients": [ingredient.__dict__ for ingredient in recipe.ingredients],
+            "id": recipe.photo.id,
+            "name": recipe.photo.name,
+            "path": recipe.photo.path
+        } if recipe.photo else None,
+        "ingredients":[{
+            "name": ingredient.name,
+            "amount": ingredient.amount,
+            "unit": ingredient.unit
+        } for ingredient in recipe.ingredients],
         "reactions": {
             "bao": str(reactions["bão"]),
             "mio_de_bao": str(reactions["mió de bão"]),
@@ -37,4 +39,4 @@ def recipeSerializator(recipe, reactions):
         "created_at": recipe.created_at.astimezone(timezone).strftime("%d/%m/%Y")
     }
 
-    # return recipe_formatted
+    return recipe_formatted
