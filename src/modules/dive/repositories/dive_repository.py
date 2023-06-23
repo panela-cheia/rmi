@@ -87,7 +87,7 @@ class DiveRepository:
     def updateDiveOwner(self, dive_id: str, new_owner: str):
         session = self.orm.get_session()
         dive = session.query(Dive).filter_by(id=dive_id).first()
-        dive.ownersDive = new_owner
+        dive.owner_id = new_owner
 
         session.commit()
 

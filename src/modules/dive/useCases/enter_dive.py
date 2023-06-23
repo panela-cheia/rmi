@@ -26,6 +26,6 @@ class EnterDiveUseCase:
         # Criar o relacionamento
         self.repository.enterDive(user_id, dive_id)
 
-        data = { "ok": "Successfully joined the dive"  }
+        data = {"ok": "Successfully joined the dive"}
 
         return data
