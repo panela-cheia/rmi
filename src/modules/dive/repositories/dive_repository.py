@@ -32,7 +32,12 @@ class DiveRepository:
 
     def findDiveById(self, dive_id):
         session = self.orm.get_session()
-        dive = session.query(Dive).filter_by(id=dive_id).first()
+        dive = session.query(Dive).filter_by(id=dive_id).options(
+            joinedload('owner'),
+            joinedload('photo'),
+            joinedload('recipe'),
+            joinedload('members')
+        ).first()
 
         return dive
 
@@ -86,10 +91,12 @@ class DiveRepository:
 
     def updateDiveOwner(self, dive_id: str, new_owner: str):
         session = self.orm.get_session()
-        dive = session.query(Dive).filter_by(id=dive_id).first()
-        dive.owner_id = new_owner
+        dive = session.query(Dive).get(dive_id)
+        new_owner = session.query(User).get(new_owner)
 
-        session.commit()
+        if dive and new_owner:
+            dive.owner = new_owner
+            session.commit()
 
         return dive
 
@@ -98,3 +105,29 @@ class DiveRepository:
         dives = session.query(UsersDive).filter_by(user_id=user_id).all()
 
         return dives
+    
+
+    def removeDiveMember(self, user_id: str, dive_id: str):
+        session = self.orm.get_session()
+
+        # Verificar se o usuário é membro do mergulho
+        users_dive = session.query(UsersDive).filter_by(user_id=user_id, dive_id=dive_id).first()
+        if users_dive:
+            session.delete(users_dive)
+            session.commit()
+
+
+    def findUserInDive(self, user_id: str, dive_id: str) -> bool:
+        session = self.orm.get_session()
+
+        users_dive = session.query(UsersDive).filter_by(user_id=user_id, dive_id=dive_id).first()
+
+        session.close()
+
+        return users_dive is not None
+
+    def getDiveMembersCount(self, dive_id):
+        session = self.orm.get_session()
+        members_count = session.query(UsersDive).filter_by(dive_id=dive_id).count()
+
+        return members_count
