@@ -1,5 +1,5 @@
-from save.orm import ORM
-from save.schema import File
+from database.infra.orm import ORM
+from database.schema.schema import File
 
 
 class FilesRepository:

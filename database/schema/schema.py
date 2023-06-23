@@ -10,7 +10,7 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = 'users'
 
-    id = Column(String, primary_key=True, default=uuid.uuid4)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String)
     username = Column(String, unique=True)
     email = Column(String, unique=True)
@@ -41,7 +41,7 @@ class Follows(Base):
 class Dive(Base):
     __tablename__ = 'dives'
 
-    id = Column(String, primary_key=True, default=uuid.uuid4)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String, unique=True)
     description = Column(String)
 
@@ -57,7 +57,7 @@ class Dive(Base):
 class UsersDive(Base):
     __tablename__ = 'users_dive'
 
-    id = Column(String, primary_key=True, default=uuid.uuid4)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = Column(String, ForeignKey('users.id'))
     user = relationship("User", back_populates='users_dive', overlaps="users_dive")
     dive_id = Column(String, ForeignKey('dives.id'))
@@ -66,7 +66,7 @@ class UsersDive(Base):
 class Recipe(Base):
     __tablename__ = 'recipes'
 
-    id = Column(String, primary_key=True, default=uuid.uuid4)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String)
     description = Column(String)
 
@@ -91,7 +91,7 @@ class Recipe(Base):
 class Ingredients(Base):
     __tablename__ = 'ingredients'
 
-    id = Column(String, primary_key=True, default=uuid.uuid4)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String)
     amount = Column(Integer)
     unit = Column(String)
@@ -114,7 +114,7 @@ class Reaction(Base):
 class Barn(Base):
     __tablename__ = 'barns'
 
-    id = Column(String, primary_key=True, default=uuid.uuid4)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
 
     user_id = Column(String, ForeignKey('users.id'), unique=True)
     user = relationship("User", back_populates="barn")
@@ -124,7 +124,7 @@ class Barn(Base):
 class File(Base):
     __tablename__ = 'files'
 
-    id = Column(String, primary_key=True, default=uuid.uuid4)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String)
     path = Column(String)
 
@@ -138,5 +138,5 @@ class File(Base):
 class IngredientsUnit(Base):
     __tablename__ = 'ingredients_units'
 
-    id = Column(String, primary_key=True, default=uuid.uuid4)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String, unique=True)

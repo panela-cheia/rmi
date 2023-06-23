@@ -1,12 +1,15 @@
-import Pyro5.server
-import Pyro5.socketutil
+import sys
+import os
 
-Pyro5.config.SERVERTYPE = "thread"
+# Obtenha o caminho absoluto do diretório que contém o arquivo main.py
+current_dir = os.path.dirname(os.path.abspath(__file__))
+#Adicione o diretório acima ao sys.path
+parent_dir = os.path.abspath(os.path.join(current_dir, ".."))
+sys.path.append(parent_dir)
 
-# adapters
-from adapters.users.user_login_login_adapter import UserLoginAdapter
 
-if __name__ == "__main__":
-    Pyro5.server.serve({
-        UserLoginAdapter:"adapters.user_login_login_adapter"
-    },use_ns=True)
+from database.infra.orm import ORM
+
+orm = ORM()
+
+orm.create_tables()

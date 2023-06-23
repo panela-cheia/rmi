@@ -1,5 +1,7 @@
-from save.orm import ORM
-from save.schema import User, Barn, Follows, UsersDive
+from database.infra.orm import ORM
+from database.schema.schema import User, File,Barn, Follows, UsersDive
+
+from sqlalchemy.orm import joinedload
 
 class UserRepository:
     def __init__(self):
@@ -23,17 +25,25 @@ class UserRepository:
     def findAll(self):
         session = self.orm.get_session()
 
-        users = session.query(User).all()
+        users = session.query(User).options(
+            joinedload('barn'),
+            joinedload('followers'),
+            joinedload('following'),
+            joinedload('owners_dive'),
+            joinedload('photo'),
+            joinedload('reactions'),
+            joinedload('recipes'),
+            joinedload('users_dive')
+        ).all()
 
         session.close()
 
         return users
 
     def findByEmail(self, email):
-
         session = self.orm.get_session()
 
-        user = session.query(User).filter(User.email == email).first()
+        user = session.query(User).filter(User.email == email).options(joinedload('barn')).first()
 
         session.close()
 
@@ -43,24 +53,44 @@ class UserRepository:
 
         session = self.orm.get_session()
 
-        user = session.query(User).filter(User.username == username).first()
+        user = session.query(User).\
+            filter(User.username == username).\
+                options(
+                    joinedload('barn'),
+                    joinedload('followers'),
+                    joinedload('following'),
+                    joinedload('owners_dive'),
+                    joinedload('photo'),
+                    joinedload('reactions'),
+                    joinedload('recipes'),
+                    joinedload('users_dive')
+                ).first()
 
         session.close()
 
         return user
 
     def findById(self, id):
-
         session = self.orm.get_session()
 
-        user = session.query(User).filter(User.id == id).first()
+        user = session.query(User).options(
+            joinedload('barn'),
+            joinedload('followers'),
+            joinedload('following'),
+            joinedload('owners_dive'),
+            joinedload('photo'),
+            joinedload('reactions'),
+            joinedload('recipes').joinedload('ingredients'),
+            joinedload('recipes').joinedload('reactions'),
+            joinedload('recipes').joinedload('photo'),
+            joinedload('users_dive')
+        ).filter(User.id == id).first()
 
         session.close()
 
         return user
 
     def update(self, id, name, username, bio):
-
         session = self.orm.get_session()
 
         user = session.query(User).filter(User.id == id).first()
@@ -69,21 +99,26 @@ class UserRepository:
         user.bio = bio
         session.commit()
 
+        # Recarrega o usuário após a atualização
+        session.refresh(user)
+
         session.close()
 
         return user
 
-    def updatePhoto(self, id, photo):
-
+    def updatePhoto(self, id, photo_id):
         session = self.orm.get_session()
 
         user = session.query(User).filter(User.id == id).first()
+        photo = session.query(File).filter(File.id == photo_id).first()
+
         user.photo = photo
         session.commit()
 
         session.close()
 
         return user
+
 
     def delete(self, id):
 
@@ -100,8 +135,7 @@ class UserRepository:
     def verifyFollowing(self, follower, following):
 
         session = self.orm.get_session()
-
-        follows = session.query(Follows).filter(Follows.followerId == follower, Follows.followingId == following).first()
+        follows = session.query(Follows).filter(Follows.follower_id == follower, Follows.following_id == following).first()
 
         session.close()
 
@@ -111,7 +145,7 @@ class UserRepository:
 
         session = self.orm.get_session()
 
-        follow = Follows(followerId=user_id, followingId=follow_id)
+        follow = Follows(follower_id=user_id, following_id=follow_id)
         session.add(follow)
         session.commit()
 
@@ -123,7 +157,7 @@ class UserRepository:
 
         session = self.orm.get_session()
 
-        session.query(Follows).filter(Follows.followerId == user_id, Follows.followingId == unfollow_id).delete()
+        session.query(Follows).filter(Follows.follower_id == user_id, Follows.following_id == unfollow_id).delete()
         session.commit()
 
         session.close()
@@ -149,10 +183,10 @@ class UserRepository:
         results = []
 
         for user in users:
-            common_followers = session.query(Follows).filter(Follows.followingId == user_id, Follows.followerId == user.id).count()
+            common_followers = session.query(Follows).filter(Follows.following_id == user_id, Follows.follower_id == user.id).count()
             common_dives = session.query(UsersDive).filter(
-                UsersDive.userId == user_id,
-                UsersDive.diveId.in_([users_dive.diveId for users_dive in user.usersDive])
+                UsersDive.user_id == user_id,
+                UsersDive.dive_id.in_([users_dive.dive_id for users_dive in user.users_dive])
             ).count()
 
             result = {
