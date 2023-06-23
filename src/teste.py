@@ -11,6 +11,7 @@ from modules.users.repositories.user_repository import UserRepository
 from modules.files.repositories.files_repository import FilesRepository
 from modules.recipes.repositories.recipe_repository import RecipeRepository
 from modules.barn.repositories.barn_repository import BarnRepository
+from modules.ingredients_unit.repositories.ingredients_unit_repository import IngredientsUnitRepository
 
 from modules.recipes.dtos.create_recipe_dto import CreateRecipeDTO
 
@@ -24,6 +25,7 @@ userRepository = UserRepository()
 filesRepository = FilesRepository()
 recipeRepository = RecipeRepository()
 barnRepository = BarnRepository()
+ingredientsUnitRepository = IngredientsUnitRepository()
 
 '''
 1) create
@@ -284,4 +286,103 @@ body = {
 dto = RemoveRecipeDTO(barnId=body["id"],recipeId=body["recipe_id"])
 remove =  barnRepository.removeRecipe(data=dto)
 print(remove)
+'''
+
+
+'''
+IngredientsUnit
+
+1) Create
+
+list_ingredients = [
+    {
+        "name":"Unidade"
+    },
+        {
+        "name":"Miligrama (mg)"
+    },
+        {
+        "name":"Copo"
+    },
+        {
+        "name":"Fio"
+    },
+        {
+        "name":"Grama (g)"
+    },
+        {
+        "name":"Pitada"
+    },
+    {
+        "name":"Litro (l)"
+    },
+        {
+        "name":"Raspas"
+    },
+        {
+        "name":"Tablete"
+    },
+        {
+        "name":"Ramo"
+    },
+        {
+        "name":"Colher de chá (c.c.)"
+    },
+        {
+        "name":"Mililitro (ml)"
+    },
+    {
+        "name":"Xícara (xíc.)"
+    },
+        {
+        "name":"Filete"
+    },
+        {
+        "name":"Colher de sopa (c.s.)"
+    },
+        {
+        "name":"Quilograma (kg)"
+    },
+        {
+        "name":"Punhado"
+    }
+]
+
+for ingredient in list_ingredients:
+    create = ingredientsUnitRepository.create(
+        name=ingredient["name"]
+    )
+
+    print(create)
+
+2) delete
+ 
+remove = ingredientsUnitRepository.delete(
+        id="c9e8888f-8736-44bb-a71c-c050182fdf46"
+    )
+
+print(remove)
+
+
+3) findAll
+
+findAll =  ingredientsUnitRepository.findAll()
+for ingredient in findAll:
+    print(ingredient.__dict__)
+
+4) findByName
+
+findByName = ingredientsUnitRepository.findByName(name="Filete")
+print(findByName.__dict__)
+
+5) findById
+
+findById = ingredientsUnitRepository.findById(id="3059a13b-f67d-4b95-a18e-35984be35ac4")
+print(findById.__dict__)
+'''
+
+
+
+'''
+Dive
 '''

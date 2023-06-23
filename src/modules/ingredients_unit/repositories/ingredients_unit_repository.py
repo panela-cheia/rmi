@@ -1,12 +1,12 @@
-from save.orm import ORM
-from save.schema import IngredientsUnit
+from database.infra.orm import ORM
+from database.schema.schema import IngredientsUnit
 
 
 class IngredientsUnitRepository:
     def __init__(self):
         self.orm = ORM()
 
-    def create(self, name):
+    def create(self, name:str):
         session = self.orm.get_session()
 
         unit = IngredientsUnit(name=name)
@@ -35,7 +35,7 @@ class IngredientsUnitRepository:
 
         return units
 
-    def findByName(self, name):
+    def findByName(self, name:str):
         session = self.orm.get_session()
 
         unit = session.query(IngredientsUnit).filter(IngredientsUnit.name == name).first()
@@ -44,7 +44,7 @@ class IngredientsUnitRepository:
 
         return unit
 
-    def findById(self, id):
+    def findById(self, id:str):
         session = self.orm.get_session()
 
         unit = session.query(IngredientsUnit).filter(IngredientsUnit.id == id).first()
