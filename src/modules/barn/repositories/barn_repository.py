@@ -5,7 +5,6 @@ from modules.barn.dtos.save_recipe_dto import BarnSaveRecipeDTO
 from modules.barn.dtos.remove_recipe_dto import RemoveRecipeDTO
 
 
-
 class BarnRepository:
     def __init__(self):
         self.orm = ORM()

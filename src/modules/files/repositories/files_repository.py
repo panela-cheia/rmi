@@ -1,58 +1,33 @@
-from shared.infra.prisma import prisma
+from save.orm import ORM
+from save.schema import File
+
 
 class FilesRepository:
-    async def create(self,name:str,path:str):
+    def __init__(self):
+        self.orm = ORM()
 
-        await prisma.connect()
-
-        fileCreated = await prisma.file.create(
-            data={
-                "name":name,
-                "path":path
-            },
-            include={
-                "dive":True,
-                "recipe":True,
-                "user":True
-            }
-        )
-
-        await prisma.disconnect()
-
-        return fileCreated
+    def create(self, name: str, path: str):
+        session = self.orm.get_session()
         
-
-    async def delete(self,id):
-        await prisma.connect()
-
-        await prisma.file.delete(
-            where={
-                "id":id
-            },
-            include={
-                "dive":True,
-                "recipe":True,
-                "user":True
-            }
+        file = File(
+            name=name,
+            path=path
         )
 
-        await prisma.disconnect()
+        session.add(file)
+        session.commit()
 
+        return file
 
-    async def findById(self,id):
-        await prisma.connect()
+    def delete(self, id):
+        session = self.orm.get_session()
+        file = session.query(File).filter_by(id=id).first()
 
-        foundedFile = await prisma.file.find_unique(
-            where={
-                "id":id
-            },
-            include={
-                "dive":True,
-                "recipe":True,
-                "user":True
-            }
-        )
+        session.delete(file)
+        session.commit()
 
-        await prisma.disconnect()
-        
+    def findById(self, id):
+        session = self.orm.get_session()
+        foundedFile = session.query(File).filter_by(id=id).first()
+
         return foundedFile

@@ -1,245 +1,94 @@
-from shared.infra.prisma import prisma
+from save.orm import ORM
 from modules.dive.dtos.create_dive_dto import CreateDiveDTO
 from modules.dive.dtos.update_dive_dto import UpdateDiveDTO
+from save.schema import Dive, User, UsersDive
+
 
 class DiveRepository:
-    async def create(self, data:CreateDiveDTO):
-        await prisma.connect()
+    def __init__(self):
+        self.orm = ORM()
+
+    def create(self, data: CreateDiveDTO):
+        session = self.orm.get_session()
         
-        dive = await prisma.dive.create(
-            data={
-                "name":data.name,
-                "description":data.description,
-                "fileId":data.fileId,
-                "ownerId":data.userId,
-            },
-            include={
-                "members":True,
-                "owner":True,
-                "photo":True,
-                "recipe":True
-            }
+        dive = Dive(
+            name=data.name,
+            description=data.description,
+            fileId=data.fileId,
+            ownerId=data.userId
         )
 
-        await prisma.disconnect()
+        session.add(dive)
+        session.commit()
 
         return dive
-    
-    async def findById(self, id):
-        await prisma.connect()
 
-        user = await prisma.user.find_unique(
-            where={
-                "id": id
-            },
-            include={
-                "ownersDive":True,
-                "photo":True,
-                "recipes":True
-            }
-        )
-
-        await prisma.disconnect()
+    def findById(self, id):
+        session = self.orm.get_session()
+        user = session.query(User).filter_by(id=id).first()
 
         return user
 
-    async def findDiveById(self, dive_id):
-        await prisma.connect()
-
-        dive = await prisma.dive.find_unique(
-            where={
-                "id": dive_id
-            },
-            include={
-                "owner":True,
-                "photo":True,
-                "recipe":{
-                    "include":{
-                        "barn":True,
-                        "dive":True,
-                        "ingredients":True,
-                        "photo":True,
-                        "reactions":True,
-                        "user":{
-                            "include":{
-                                "photo":True
-                            }
-                        }
-                    },
-                    "order_by":{
-                        "created_at":"desc"
-                    }
-                }
-            }
-        )
-
-        await prisma.disconnect()
+    def findDiveById(self, dive_id):
+        session = self.orm.get_session()
+        dive = session.query(Dive).filter_by(id=dive_id).first()
 
         return dive
-    
-    async def findDiveByName(self, name):
-        await prisma.connect()
 
-        dive = await prisma.dive.find_first(
-            where={
-                "name": {
-                    "equals":name
-                }
-            },
-            include={
-                "photo":True,
-                "recipe":True,
-                "members":True,
-                "owner":True
-            }
-        )
-
-        await prisma.disconnect()
+    def findDiveByName(self, name):
+        session = self.orm.get_session()
+        dive = session.query(Dive).filter_by(name=name).first()
 
         return dive
-    
-    async def verifyEntry(self, user: str, dive: str) -> bool:
-        await prisma.connect()
-        
-        values = await prisma.usersdive.find_first(
-            where={
-                "userId": user,
-                "diveId": dive
-            },
-            include={
-                "dive":True,
-                "user":True,
-            }
-        )
-        
-        await prisma.disconnect()
+
+    def verifyEntry(self, user: str, dive: str) -> bool:
+        session = self.orm.get_session()
+        values = session.query(UsersDive).filter_by(userId=user, diveId=dive).first()
 
         return values is not None
 
-    async def enterDive(self, user_id: str, dive_id: str):
-        await prisma.connect()
-        
-        values = await prisma.usersdive.create(
-            data={
-                "user": {"connect":{"id": user_id}},
-                "dive": {"connect":{"id": dive_id}}
-            }
-        )
-        
-        await prisma.disconnect()
+    def enterDive(self, user_id: str, dive_id: str):
+        session = self.orm.get_session()
+        user_dive = UsersDive(userId=user_id, diveId=dive_id)
 
-        return values
-    
-    async def exitDive(self, user_id: str, dive_id: str):
-        await prisma.connect()
+        session.add(user_dive)
+        session.commit()
 
-        await prisma.usersdive.delete(
-            where={
-                "userId_diveId":{
-                    "userId": user_id,
-                    "diveId": dive_id
-                }
-            },
-            include={
-                "dive":True,
-                "user":True
-            }
-        )
+        return user_dive
 
-        await prisma.disconnect()
+    def exitDive(self, user_id: str, dive_id: str):
+        session = self.orm.get_session()
+        session.query(UsersDive).filter_by(userId=user_id, diveId=dive_id).delete()
+        session.commit()
 
-    async def update(self,updateDiveDTO:UpdateDiveDTO):
-        await prisma.connect()
+    def update(self, updateDiveDTO: UpdateDiveDTO):
+        session = self.orm.get_session()
+        dive = session.query(Dive).filter_by(id=updateDiveDTO.id).first()
+        dive.description = updateDiveDTO.description
+        dive.fileId = updateDiveDTO.fileId
+        dive.name = updateDiveDTO.name
 
-        dive = await prisma.dive.update(
-            where={
-                "id": updateDiveDTO.id
-            },
-            data={
-                "description":updateDiveDTO.description,
-                "fileId":updateDiveDTO.fileId,
-                "name":updateDiveDTO.name
-            },
-            include={
-                "photo":True
-            }
-        )
-
-        await prisma.disconnect()
+        session.commit()
 
         return dive
-    
-    async def findAll(self, name:str):
-        await prisma.connect()
 
-        dives = await prisma.dive.find_many(
-            where={
-                "name":{
-                    "contains":name
-                }
-            },
-            include={
-                "owner":True,
-                "photo":True,
-                "recipe":True,
-                "members":True
-            }
-        )
-
-        await prisma.disconnect()
+    def findAll(self, name: str):
+        session = self.orm.get_session()
+        dives = session.query(Dive).filter(Dive.name.contains(name)).all()
 
         return dives
-    
-    async def updateDiveOwner(self,dive_id:str,new_owner:str):
-        await prisma.connect()
 
-        dives = await prisma.dive.update(
-            where={
-                "id":dive_id
-            },
-            data={
-                "ownersDive":new_owner
-            }
-        )
+    def updateDiveOwner(self, dive_id: str, new_owner: str):
+        session = self.orm.get_session()
+        dive = session.query(Dive).filter_by(id=dive_id).first()
+        dive.ownersDive = new_owner
 
-        await prisma.disconnect()
-        return dives
-    
-    async def findUserDive(self,user_id):
-        await prisma.connect()
+        session.commit()
 
-        dives = await prisma.usersdive.find_many(
-            where={
-                "userId":{
-                    "equals":user_id
-                }
-            },
-            include={
-                "dive":{
-                    "include":{
-                        "photo":True,
-                        "recipe":{
-                            "include":{
-                                "photo":True
-                            }
-                        },
-                        "members":{
-                            "include":{
-                                "user":True
-                            }
-                        },
-                        
-                    }
-                },
-                
-                "user":{
-                    "include":{
-                        "photo":True
-                    }
-                }
-            }
-        )
+        return dive
 
-        await prisma.disconnect()
+    def findUserDive(self, user_id):
+        session = self.orm.get_session()
+        dives = session.query(UsersDive).filter_by(userId=user_id).all()
 
         return dives
