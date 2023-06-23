@@ -1,4 +1,3 @@
-import asyncio
 import sys
 import json
 
@@ -10,4 +9,4 @@ from tests.messages import aux26
 if __name__ == "__main__":
     base = Bootstrap()
 
-    asyncio.run(base.run(json.dumps(aux26)))
+    base.run(json.dumps(aux26))

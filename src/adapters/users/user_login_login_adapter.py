@@ -3,6 +3,8 @@ import Pyro5.server
 from constants.topics import Topics
 from loguru import logger
 
+
+
 # repositories
 from modules.users.repositories.user_repository import UserRepository
 
@@ -10,6 +12,7 @@ from modules.users.repositories.user_repository import UserRepository
 from modules.users.useCases.login_user import LoginUserUseCase
 
 @Pyro5.server.expose
+
 class UserLoginAdapter:
     def __init__(self) -> None:
         self.useCase = LoginUserUseCase(userRepository=UserRepository())
