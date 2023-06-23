@@ -8,13 +8,13 @@ class ListDiveRecipesUseCase:
         self.repository = repository
         self.recipeRepository = recipeRepository
     
-    async def execute(self, dive_id:str):
-        dives = await self.repository.findDiveById(dive_id=dive_id)
+    def execute(self, dive_id:str):
+        dives = self.repository.findDiveById(dive_id=dive_id)
 
         all_recipes = []
 
         for recipe in dives.recipe:
-            reactions = await self.recipeRepository.getReactionQuantities(recipe_id=recipe.id)
+            reactions = self.recipeRepository.getReactionQuantities(recipe_id=recipe.id)
 
             recipe_formatted =  recipeSerializator(recipe=recipe,reactions=reactions)
 

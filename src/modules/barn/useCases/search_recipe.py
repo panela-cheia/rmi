@@ -7,8 +7,8 @@ class SearhRecipeUseCase:
     def __init__(self, repository: BarnRepository):
         self.repository = repository
 
-    async def execute(self, data: SearchRecipeInBarnDTO):
-        barns =  await self.repository.findAll(barnId=data.barnId)
+    def execute(self, data: SearchRecipeInBarnDTO):
+        barns =  self.repository.findAll(barnId=data.barnId)
 
         if barns is None:
             return []

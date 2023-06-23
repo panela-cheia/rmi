@@ -6,9 +6,9 @@ class SaveRecipeUseCase:
     def __init__(self, repository: BarnRepository):
         self.repository = repository
 
-    async def execute(self, data: BarnSaveRecipeDTO):
+    def execute(self, data: BarnSaveRecipeDTO):
         try:
-            barn =  await self.repository.save(data=data)
+            barn =  self.repository.save(data=data)
 
             if not barn:
                 raise ValueError("User does not exist") 

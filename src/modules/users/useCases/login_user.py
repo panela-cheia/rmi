@@ -16,7 +16,7 @@ class LoginUserUseCase:
     def execute(self, email, password):
         try:
             user = self.userRepository.findByEmail(email)
-
+            
             if not user:
                 raise CustomError("User not exists")
 
