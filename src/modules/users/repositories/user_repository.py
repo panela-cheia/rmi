@@ -200,6 +200,15 @@ class UserRepository:
 
         users = session.query(User).filter(
             (User.name.contains(value) | User.username.contains(value)) & (User.id != user_id)
+        ).options(
+            joinedload('barn'),
+            joinedload('followers'),
+            joinedload('following'),
+            joinedload('owners_dive'),
+            joinedload('photo'),
+            joinedload('reactions'),
+            joinedload('recipes'),
+            joinedload('users_dive')
         ).all()
 
         results = []
