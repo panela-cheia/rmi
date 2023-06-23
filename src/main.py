@@ -1,15 +1,9 @@
-import sys
-import os
+import json
 
-# Obtenha o caminho absoluto do diretório que contém o arquivo main.py
-current_dir = os.path.dirname(os.path.abspath(__file__))
-#Adicione o diretório acima ao sys.path
-parent_dir = os.path.abspath(os.path.join(current_dir, ".."))
-sys.path.append(parent_dir)
+from base.base import Bootstrap
+from tests.messages import aux26
 
+if __name__ == "__main__":
+    base = Bootstrap()
 
-from database.infra.orm import ORM
-
-orm = ORM()
-
-orm.create_tables()
+    base.run(json.dumps(aux26))
