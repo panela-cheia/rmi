@@ -5,10 +5,10 @@ class CreateRecipeUseCase:
     def __init__(self,repository:RecipeRepository) -> None:
         self.repository = repository
 
-    async def execute(self,data:CreateRecipeDTO):
+    def execute(self,data:CreateRecipeDTO):
 
         try:
-            recipe =  await self.repository.create(data=data)
+            recipe =  self.repository.create(data=data)
 
             if not recipe:
                 raise Exception("Error to try create recipe!")

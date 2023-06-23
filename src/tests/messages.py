@@ -1,9 +1,9 @@
 aux1 = {
     "topic": "@user/create_user",
     "body": {
-        "name": "PAPA",
-        "username": "@moviepapa",
-        "email": "papa@gmail.com",
+        "name": "Mendes",
+        "username": "@o.viniciusmendes",
+        "email": "vinicius@gmail.com",
         "password": "12345678"
     }
 }
@@ -115,8 +115,8 @@ aux15 = {
     "body": {
         "name": "dive-2",
         "description": "testar dive",
-        "userId": "75621072-e6b5-49ae-a5ff-424707d534b2",
-        "fileId": "9ca8bf00-8a55-4d47-93ed-36659d424567",
+        "userId": "64542159-4fff-40ed-a22c-a3d0d5eb9196",
+        "fileId": "7db5df5e-3835-4f34-94d8-12478b4bea64",
         "ingredients": [
             {"name": "Ingredient 1", "amount": 1, "unit": "cup"},
             {"name": "Ingredient 2", "amount": 2, "unit": "teaspoon"},

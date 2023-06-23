@@ -1,16 +1,22 @@
 import pytz
+from modules.users.repositories.user_repository import UserRepository as repo
 
 timezone = pytz.timezone('America/Sao_Paulo')
 
 def recipeSerializator(recipe, reactions):
+    repository = repo()
+    user= repository.findById(recipe.user_id)
+    
+    
+
     recipe_formatted = {
         "id": recipe.id,
         "name": recipe.name,
         "description": recipe.description,
         "user": {
-            "id": recipe.user.__dict__["id"],
-            "name": recipe.user.__dict__["name"],
-            "username": recipe.user.__dict__["username"],
+            "id": user.id,
+            "name": user.name,
+            "username": user.username,
             "photo": {
                 "id": recipe.user.__dict__["photo"].id,
                 "name": recipe.user.__dict__["photo"].name,
@@ -31,4 +37,4 @@ def recipeSerializator(recipe, reactions):
         "created_at": recipe.created_at.astimezone(timezone).strftime("%d/%m/%Y")
     }
 
-    return recipe_formatted
+    # return recipe_formatted
