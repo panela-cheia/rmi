@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from schema import Base
+from save.schema import Base
 
 # Crie o engine de conexão com o banco de dados
 engine = create_engine('sqlite:///dev.db')

@@ -1,5 +1,5 @@
-from schema import Barn, Recipe
-from orm import ORM
+from save.schema import Barn, Recipe
+from save.orm import ORM
 
 from modules.barn.dtos.save_recipe_dto import BarnSaveRecipeDTO
 from modules.barn.dtos.remove_recipe_dto import RemoveRecipeDTO
@@ -7,23 +7,31 @@ from modules.barn.dtos.remove_recipe_dto import RemoveRecipeDTO
 
 
 class BarnRepository:
-
-    def save(self, session: ORM, data: BarnSaveRecipeDTO):
-        barn = session.get_session.query(Barn).filter_by(id=data.barnId).first()
-        recipe = session.get_session.query(Recipe).filter_by(id=data.recipeId).first()
+    def __init__(self):
+        self.orm = ORM()
+    
+    def save(self, data: BarnSaveRecipeDTO):
+        session = self.orm.get_session()
+        
+        barn = session.query(Barn).filter_by(id=data.barnId).first()
+        recipe = session.query(Recipe).filter_by(id=data.recipeId).first()
 
         barn.recipes.append(recipe)
         session.commit()
 
         return barn
 
-    def findAll(self, session: ORM, barnId: str):
-        barn = session.get_session.query(Barn).filter_by(id=barnId).first()
+    def findAll(self, barnId: str):
+        session = self.orm.get_session()
+        
+        barn = session.query(Barn).filter_by(id=barnId).first()
         return barn
 
-    def removeRecipe(self, session: ORM, data: RemoveRecipeDTO):
-        barn = session.get_session.query(Barn).filter_by(id=data.barnId).first()
-        recipe = session.get_session.query(Recipe).filter_by(id=data.recipeId).first()
+    def removeRecipe(self, data: RemoveRecipeDTO):
+        session = self.orm.get_session()
+        
+        barn = session.query(Barn).filter_by(id=data.barnId).first()
+        recipe = session.query(Recipe).filter_by(id=data.recipeId).first()
 
         barn.recipes.remove(recipe)
         session.commit()

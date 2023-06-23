@@ -18,17 +18,17 @@ class User(Base):
     bio = Column(String)
 
     photo_id = Column(String, ForeignKey('files.id'))
-    photo = relationship("File")
+    photo = relationship("File", back_populates='users')
 
     barn = relationship("Barn")
 
     followers = relationship("Follows", back_populates="follower", foreign_keys='Follows.follower_id')
     following = relationship("Follows", back_populates="following", foreign_keys='Follows.following_id')
 
-    recipes = relationship("Recipe")
-    users_dive = relationship("UsersDive")
+    recipes = relationship("Recipe", back_populates='user')
+    users_dive = relationship("UsersDive", back_populates="user")
     owners_dive = relationship("Dive", back_populates="owner")
-    reactions = relationship("Reaction")
+    reactions = relationship("Reaction", back_populates="user")
 
 class Follows(Base):
     __tablename__ = 'follows'
@@ -48,20 +48,20 @@ class Dive(Base):
     owner_id = Column(String, ForeignKey('users.id'))
     owner = relationship("User", back_populates="owners_dive")
 
-    members = relationship("UsersDive")
-    recipe = relationship("Recipe")
+    members = relationship("UsersDive", back_populates='dive')
+    recipe = relationship("Recipe", back_populates='dive')
 
     photo_id = Column(String, ForeignKey('files.id'))
-    photo = relationship("File")
+    photo = relationship("File", back_populates='dive')
 
 class UsersDive(Base):
     __tablename__ = 'users_dive'
 
     id = Column(String, primary_key=True, default=uuid.uuid4)
     user_id = Column(String, ForeignKey('users.id'))
-    user = relationship("User")
+    user = relationship("User", back_populates='users_dive', overlaps="users_dive")
     dive_id = Column(String, ForeignKey('dives.id'))
-    dive = relationship("Dive")
+    dive = relationship("Dive", back_populates='members', overlaps="members")
 
 class Recipe(Base):
     __tablename__ = 'recipes'
@@ -71,19 +71,19 @@ class Recipe(Base):
     description = Column(String)
 
     user_id = Column(String, ForeignKey('users.id'))
-    user = relationship("User")
+    user = relationship("User", back_populates='recipes', overlaps="recipes")
 
     barn_id = Column(String, ForeignKey('barns.id'))
-    barn = relationship("Barn")
+    barn = relationship("Barn", back_populates='recipes')
 
     dive_id = Column(String, ForeignKey('dives.id'))
-    dive = relationship("Dive")
+    dive = relationship("Dive", back_populates='recipe', overlaps="recipe")
 
     photo_id = Column(String, ForeignKey('files.id'))
-    photo = relationship("File")
+    photo = relationship("File", back_populates='recipe')
 
-    reactions = relationship("Reaction")
-    ingredients = relationship("Ingredients")
+    reactions = relationship("Reaction", back_populates='recipe')
+    ingredients = relationship("Ingredients", back_populates='recipe')
 
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
@@ -97,7 +97,7 @@ class Ingredients(Base):
     unit = Column(String)
 
     recipe_id = Column(String, ForeignKey('recipes.id'))
-    recipe = relationship("Recipe")
+    recipe = relationship("Recipe", back_populates='ingredients', overlaps="ingredients")
 
 class Reaction(Base):
     __tablename__ = 'reactions'
@@ -106,10 +106,10 @@ class Reaction(Base):
     type = Column(String)
 
     recipe_id = Column(String, ForeignKey('recipes.id'))
-    recipe = relationship("Recipe")
+    recipe = relationship("Recipe", back_populates='reactions', overlaps="reactions")
 
     user_id = Column(String, ForeignKey('users.id'))
-    user = relationship("User")
+    user = relationship("User", back_populates='reactions')
 
 class Barn(Base):
     __tablename__ = 'barns'
@@ -119,7 +119,7 @@ class Barn(Base):
     user_id = Column(String, ForeignKey('users.id'), unique=True)
     user = relationship("User", back_populates="barn")
 
-    recipes = relationship("Recipe")
+    recipes = relationship("Recipe", back_populates="barn")
 
 class File(Base):
     __tablename__ = 'files'
@@ -131,9 +131,9 @@ class File(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now)
 
-    users = relationship("User")
-    recipe = relationship("Recipe")
-    dive = relationship("Dive")
+    users = relationship("User", back_populates='photo')
+    recipe = relationship("Recipe", back_populates='photo')
+    dive = relationship("Dive", back_populates='photo')
 
 class IngredientsUnit(Base):
     __tablename__ = 'ingredients_units'

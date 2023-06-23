@@ -1,73 +1,54 @@
-from shared.infra.prisma import prisma
+from save.orm import ORM
+from save.schema import IngredientsUnit
+
 
 class IngredientsUnitRepository:
-    async def create(self,name:str):
+    def __init__(self):
+        self.orm = ORM()
 
-        await prisma.connect()
+    def create(self, name):
+        session = self.orm.get_session()
 
-        unit = await prisma.ingredientsunit.create(
-            data={
-                "name":name
-            }
-        )
+        unit = IngredientsUnit(name=name)
+        session.add(unit)
+        session.commit()
 
-        await prisma.disconnect()
+        session.close()
 
         return unit
-        
 
-    async def delete(self,id):
-        await prisma.connect()
+    def delete(self, id):
+        session = self.orm.get_session()
 
-        await prisma.ingredientsunit.delete(
-            where={
-                "id":id
-            }
-        )
+        unit = session.query(IngredientsUnit).filter(IngredientsUnit.id == id).first()
+        session.delete(unit)
+        session.commit()
 
-        await prisma.disconnect()
+        session.close()
 
+    def findAll(self):
+        session = self.orm.get_session()
 
-    async def findAll(self):
-        await prisma.connect()
+        units = session.query(IngredientsUnit).order_by(IngredientsUnit.name).all()
 
-        units = await prisma.ingredientsunit.find_many(
-            where={
-                
-            },
-            order={
-                "name":"asc"
-            }
-        )
+        session.close()
 
-        await prisma.disconnect()
-        
         return units
-    
-    async def findByName(self,name:str):
-        await prisma.connect()
 
-        units = await prisma.ingredientsunit.find_first(
-            where={
-                "name":{
-                    "equals":name
-                }
-            }
-        )
+    def findByName(self, name):
+        session = self.orm.get_session()
 
-        await prisma.disconnect()
-        
-        return units
-    
-    async def findById(self,id:str):
-        await prisma.connect()
+        unit = session.query(IngredientsUnit).filter(IngredientsUnit.name == name).first()
 
-        unit = await prisma.ingredientsunit.find_unique(
-            where={
-                "id":id
-            }
-        )
+        session.close()
 
-        await prisma.disconnect()
+        return unit
+
+    def findById(self, id):
+        session = self.orm.get_session()
+
+        unit = session.query(IngredientsUnit).filter(IngredientsUnit.id == id).first()
+
+        session.close()
 
         return unit

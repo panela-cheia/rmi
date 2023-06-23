@@ -1,11 +1,16 @@
-from schema import Barn, Recipe, Ingredients, Reaction
-from orm import ORM
+from save.schema import Recipe, Ingredients, Reaction
+from save.orm import ORM
 from src.modules.recipes.dtos.create_recipe_dto import CreateRecipeDTO
 
 from sqlalchemy.orm import joinedload
 
 class RecipeRepository:
-    def create(self, session: ORM, data: CreateRecipeDTO):
+    def __init__(self):
+        self.orm = ORM()
+    
+    def create(self, data: CreateRecipeDTO):
+        session = self.orm.get_session()
+        
         recipe = Recipe(
             name=data.name,
             description=data.description,
@@ -26,7 +31,9 @@ class RecipeRepository:
 
         return recipe
 
-    def findAll(self, session: ORM):
+    def findAll(self):
+        session = self.orm.get_session()
+        
         recipes = session.query(Recipe).\
             options(joinedload(Recipe.barn), joinedload(Recipe.dive),
                     joinedload(Recipe.ingredients), joinedload(Recipe.photo),
@@ -35,7 +42,9 @@ class RecipeRepository:
 
         return recipes
 
-    def search(self, session: ORM, name: str):
+    def search(self, name: str):
+        session = self.orm.get_session()
+        
         recipes = session.query(Recipe).\
             options(joinedload(Recipe.barn), joinedload(Recipe.dive),
                     joinedload(Recipe.ingredients), joinedload(Recipe.photo),
@@ -44,13 +53,16 @@ class RecipeRepository:
 
         return recipes
 
-    def verify_existing_reaction(self, session: ORM, recipe_id: str, user_id: str):
+    def verify_existing_reaction(self, recipe_id: str, user_id: str):
+        session = self.orm.get_session()
+        
         existing_reaction = session.query(Reaction).\
             filter(Reaction.recipeId == recipe_id, Reaction.userId == user_id).first()
 
         return existing_reaction
 
-    def reaction(self, session: ORM, recipe_id: str, type: str, user_id: str):
+    def reaction(self, recipe_id: str, type: str, user_id: str):
+        session = self.orm.get_session()
         reaction = Reaction(type=type, recipeId=recipe_id, userId=user_id)
 
         session.add(reaction)
@@ -59,7 +71,8 @@ class RecipeRepository:
 
         return reaction
 
-    def updateReaction(self, session: ORM, id: str, type: str):
+    def updateReaction(self, id: str, type: str):
+        session = self.orm.get_session()
         reaction = session.query(Reaction).get(id)
         reaction.type = type
 
@@ -67,7 +80,9 @@ class RecipeRepository:
 
         return reaction
 
-    def getReactionQuantities(self, session: ORM, recipe_id: str):
+    def getReactionQuantities(self, recipe_id: str):
+        session = self.orm.get_session()
+        
         reaction_quantities = {
             "bão": 0,
             "mió de bão": 0,

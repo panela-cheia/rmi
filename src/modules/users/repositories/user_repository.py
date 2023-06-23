@@ -1,307 +1,168 @@
-from shared.infra.prisma import prisma
-
+from save.orm import ORM
+from save.schema import User, Barn, Follows, UsersDive
 
 class UserRepository:
-    async def create(self, name, username, email, password):
-        await prisma.connect()
+    def __init__(self):
+        self.orm = ORM()
+    
+    def create(self, name, username, email, password):
+        session = self.orm.get_session()
 
-        user = await prisma.user.create(
-            data={
-                "name": name,
-                "username": username,
-                "email": email,
-                "password": password
-            }
-        )
+        user = User(name=name, username=username, email=email, password=password)
+        session.add(user)
+        session.commit()
 
-        await prisma.barn.create(
-            data={
-                "user": {
-                    "connect": {
-                        "id": user.id
-                    }
-                }
-            }
-        )
+        barn = Barn(user_id=user.id)
+        session.add(barn)
+        session.commit()
 
-        await prisma.disconnect()
+        session.close()
 
         return user
 
-    async def findAll(self):
-        await prisma.connect()
+    def findAll(self):
+        session = self.orm.get_session()
 
-        users = await prisma.user.find_many(
-            include={
-                "barn": True,
-                "followers":True,
-                "following":True,
-                "ownersDive":True,
-                "photo":True,
-                "reactions":True,
-                "recipes":True,
-                "usersDive":True
-            }
-        )
+        users = session.query(User).all()
 
-        await prisma.disconnect()
+        session.close()
 
         return users
 
     def findByEmail(self, email):
-        prisma.connect()
 
-        user = prisma.user.find_unique(
-            where={
-                'email': email
-            },
-            include={
-                "barn":True
-            }
-        )
+        session = self.orm.get_session()
 
-        prisma.disconnect()
+        user = session.query(User).filter(User.email == email).first()
+
+        session.close()
 
         return user
 
-    async def findByUsername(self, username):
-        await prisma.connect()
+    def findByUsername(self, username):
 
-        user = await prisma.user.find_unique(
-            where={
-                "username": username
-            },
-            include={
-                "barn": True,
-                "followers":True,
-                "following":True,
-                "ownersDive":True,
-                "photo":True,
-                "reactions":True,
-                "recipes":True,
-                "usersDive":True
-            }
-        )
+        session = self.orm.get_session()
 
-        await prisma.disconnect()
+        user = session.query(User).filter(User.username == username).first()
+
+        session.close()
 
         return user
 
-    async def findById(self, id):
-        await prisma.connect()
+    def findById(self, id):
 
-        user = await prisma.user.find_unique(
-            where={
-                "id": id
-            },
-            include={
-                "barn": True,
-                "followers":True,
-                "following":True,
-                "ownersDive":True,
-                "photo":True,
-                "reactions":True,
-                "recipes":{
-                    "include":{
-                        "ingredients":True,
-                        "reactions":True,
-                        "photo":True
-                    }
-                },
-                "usersDive":True
-            }
-        )
+        session = self.orm.get_session()
 
-        await prisma.disconnect()
+        user = session.query(User).filter(User.id == id).first()
+
+        session.close()
 
         return user
 
-    async def update(self, id, name, username, bio):
-        await prisma.connect()
+    def update(self, id, name, username, bio):
 
-        user = await prisma.user.update(
-            where={
-                "id": id
-            },
-            data={
-                "name": name,
-                "username": username,
-                "bio": bio
-            }
-        )
+        session = self.orm.get_session()
 
-        await prisma.disconnect()
+        user = session.query(User).filter(User.id == id).first()
+        user.name = name
+        user.username = username
+        user.bio = bio
+        session.commit()
+
+        session.close()
 
         return user
 
-    async def updatePhoto(self, id, photo):
-        await prisma.connect()
+    def updatePhoto(self, id, photo):
 
-        user = await prisma.user.update(
-            where={
-                'id': id
-            },
-            data={
-                "photo": {
-                    "connect": {
-                        "id":photo
-                    }
-                }
-            },
-            include={
-                "photo":True,
-            }
-        )
+        session = self.orm.get_session()
 
-        await prisma.disconnect()
+        user = session.query(User).filter(User.id == id).first()
+        user.photo = photo
+        session.commit()
+
+        session.close()
 
         return user
 
-    async def delete(self, id):
-        await prisma.connect()
+    def delete(self, id):
 
-        user = await prisma.user.delete(
-            where={
-                'id': id
-            }
-        )
+        session = self.orm.get_session()
 
-        await prisma.disconnect()
+        user = session.query(User).filter(User.id == id).first()
+        session.delete(user)
+        session.commit()
+
+        session.close()
 
         return user
 
-    async def verifyFollowing(self, follower: str, following: str) -> bool:
-        await prisma.connect()
+    def verifyFollowing(self, follower, following):
 
-        values = await prisma.follows.find_first(
-            where={
-                "followerId": follower,
-                "followingId": following
-            }
-        )
+        session = self.orm.get_session()
 
-        await prisma.disconnect()
+        follows = session.query(Follows).filter(Follows.followerId == follower, Follows.followingId == following).first()
 
-        return values is not None
+        session.close()
 
-    async def followUser(self, user_id: str, follow_id: str):
-        await prisma.connect()
+        return follows is not None
 
-        values = await prisma.follows.create(
-            data={
-                "follower": {"connect": {"id": user_id}},
-                "following": {"connect": {"id": follow_id}}
-            }
-        )
+    def followUser(self, user_id, follow_id):
 
-        await prisma.disconnect()
-        return values
+        session = self.orm.get_session()
 
-    async def deleteFollow(self, user_id: str, unfollow_id: str):
-        await prisma.connect()
+        follow = Follows(followerId=user_id, followingId=follow_id)
+        session.add(follow)
+        session.commit()
 
-        await prisma.follows.delete(
-            where={
-                "followerId_followingId": {
-                    "followerId": user_id,
-                    "followingId": unfollow_id
-                }
-            }
-        )
+        session.close()
 
-        await prisma.disconnect()
+        return follow
 
-    async def findOther(self, id: str):
-        await prisma.connect()
+    def deleteFollow(self, user_id, unfollow_id):
 
-        users = await prisma.user.find_many(
-            where={
-                "id": {
-                    "not": id
-                }
-            },
-            order={
-                'username': 'asc',
-            },
-            include={
-                "barn": True,
-                "followers":True,
-                "following":True,
-                "ownersDive":True,
-                "photo":True,
-                "reactions":True,
-                "recipes":True,
-                "usersDive":True
-            }
-        )
+        session = self.orm.get_session()
 
-        await prisma.disconnect()
+        session.query(Follows).filter(Follows.followerId == user_id, Follows.followingId == unfollow_id).delete()
+        session.commit()
+
+        session.close()
+
+    def findOther(self, id):
+
+        session = self.orm.get_session()
+
+        users = session.query(User).filter(User.id != id).all()
+
+        session.close()
 
         return users
-    
-    async def searchUser(self,user_id:str,value:str):
-        await prisma.connect()
 
-        users = await prisma.user.find_many(
-            where={
-                "OR":[
-                    {
-                        "name":{
-                            "contains":value
-                        }
-                    },
-                    {
-                        "username":{
-                            "contains":value
-                        }
-                    }
-                ],
-                "NOT":{
-                    "id":user_id
-                }
-            },
-            include={
-                "photo":True,
-                "followers":True,
-                "usersDive":True
-            },
-            order={
-                "username":"asc"
-            }
-        )
+    def searchUser(self, user_id, value):
+
+        session = self.orm.get_session()
+
+        users = session.query(User).filter(
+            (User.name.contains(value) | User.username.contains(value)) & (User.id != user_id)
+        ).all()
 
         results = []
 
         for user in users:
-            common_followers = 0
-            common_dives = 0
-
-            
-            if user.followers is not None:
-                common_followers = await prisma.follows.count(
-                    where={
-                        "followingId":user_id,
-                        "followerId":user.id
-                    }
-                )
-            
-            if user.usersDive is not None:
-                common_dives = await prisma.usersdive.count(
-                    where={
-                        "userId":user_id,
-                        "diveId":{"in":[users_dive.diveId for users_dive in user.usersDive]}
-                    }
-                )
+            common_followers = session.query(Follows).filter(Follows.followingId == user_id, Follows.followerId == user.id).count()
+            common_dives = session.query(UsersDive).filter(
+                UsersDive.userId == user_id,
+                UsersDive.diveId.in_([users_dive.diveId for users_dive in user.usersDive])
+            ).count()
 
             result = {
-                "user":user,
-                "common_followers":common_followers,
+                "user": user,
+                "common_followers": common_followers,
                 "common_dives": common_dives
             }
 
             results.append(result)
 
-
-        await prisma.disconnect()
+        session.close()
 
         return results
