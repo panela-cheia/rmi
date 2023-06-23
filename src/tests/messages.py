@@ -113,10 +113,10 @@ aux14 = {
 aux15 = {
     "topic": "@recipe/create_recipe",
     "body": {
-        "name": "dive-2",
+        "name": "dive-3",
         "description": "testar dive",
         "userId": "64542159-4fff-40ed-a22c-a3d0d5eb9196",
-        "fileId": "7db5df5e-3835-4f34-94d8-12478b4bea64",
+        "fileId": "fd337eb9-d292-493e-8835-e9f003e326e4",
         "ingredients": [
             {"name": "Ingredient 1", "amount": 1, "unit": "cup"},
             {"name": "Ingredient 2", "amount": 2, "unit": "teaspoon"},
