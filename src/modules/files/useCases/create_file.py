@@ -11,7 +11,7 @@ class CreateFileUseCase:
     def __init__(self,repository:FilesRepository) -> None:
         self.repository = repository
 
-    async def execute(self,createFileDTO:CreateFileDTO):
+    def execute(self,createFileDTO:CreateFileDTO):
         extension = createFileDTO.name[-4:]
 
         if extension != ".png" and extension != ".jpg":
@@ -19,7 +19,7 @@ class CreateFileUseCase:
 
         finalName = generate() +  "-" + createFileDTO.name
 
-        response = await self.repository.create(name=finalName,path=createFileDTO.path)
+        response = self.repository.create(name=finalName,path=createFileDTO.path)
 
         data = {
             "id": response.id,

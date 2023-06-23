@@ -10,9 +10,9 @@ sys.path.append(parent_dir)
 import json
 
 from base.base import Bootstrap
-from tests.messages import aux5
+from src.tests.messages import aux16
 
 if __name__ == "__main__":
     base = Bootstrap()
 
-    answer = base.run(json.dumps(aux5))
+    answer = base.run(json.dumps(aux16))

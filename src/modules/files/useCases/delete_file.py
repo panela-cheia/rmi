@@ -7,16 +7,16 @@ class DeleteFileUseCase:
     def __init__(self, repository: FilesRepository) -> None:
         self.repository = repository
 
-    async def execute(self, deleteFileDTO:DeleteFileDTO):
+    def execute(self, deleteFileDTO:DeleteFileDTO):
 
-        verifyIfFileExists = await self.repository.findById(id=deleteFileDTO.id)
+        verifyIfFileExists = self.repository.findById(id=deleteFileDTO.id)
 
         if not verifyIfFileExists:
             
             return { "error":"File not found" }
         
         try:
-            await self.repository.delete(deleteFileDTO.id)
+            self.repository.delete(deleteFileDTO.id)
             return { "ok":"Successfully delete file" }
         except:
             raise { "error":"An error occurred during file deletion" }
