@@ -10,8 +10,12 @@ sys.path.append(parent_dir)
 from modules.users.repositories.user_repository import UserRepository
 from modules.files.repositories.files_repository import FilesRepository
 from modules.recipes.repositories.recipe_repository import RecipeRepository
+from modules.barn.repositories.barn_repository import BarnRepository
 
 from modules.recipes.dtos.create_recipe_dto import CreateRecipeDTO
+
+from modules.barn.dtos.save_recipe_dto import BarnSaveRecipeDTO
+from modules.barn.dtos.remove_recipe_dto import RemoveRecipeDTO
 
 # utils
 from utils.convert_list_convert_to_ingredient_dtos import convert_list_to_ingredient_dtos
@@ -19,6 +23,7 @@ from utils.convert_list_convert_to_ingredient_dtos import convert_list_to_ingred
 userRepository = UserRepository()
 filesRepository = FilesRepository()
 recipeRepository = RecipeRepository()
+barnRepository = BarnRepository()
 
 '''
 1) create
@@ -244,7 +249,39 @@ getReactionQuantities = recipeRepository.getReactionQuantities(
 )
 
 print(getReactionQuantities)
-
 '''
 
+'''
+Barn
 
+1) save
+body = {
+    "id": "3e1e7198-bf1b-4f1b-b035-05d35b5a8399",
+    "recipe_id": "3048e9a3-c27b-4dcf-84ef-2e2f42bd188c"
+}
+
+dto = BarnSaveRecipeDTO(barnId=body["id"],recipeId=body["recipe_id"])
+save =  barnRepository.save(data=dto)
+print(save)
+
+2) findAll
+
+findAll = barnRepository.findAll(barnId="3e1e7198-bf1b-4f1b-b035-05d35b5a8399")
+print(findAll)
+
+for recipe in findAll["recipes"]:
+    print(recipe)
+    print(recipe.photo.__dict__)
+    for ingredient in recipe.ingredients:
+        print(ingredient.__dict__)
+
+3)
+body = {
+    "id": "3e1e7198-bf1b-4f1b-b035-05d35b5a8399",
+    "recipe_id": "3048e9a3-c27b-4dcf-84ef-2e2f42bd188c"
+}
+
+dto = RemoveRecipeDTO(barnId=body["id"],recipeId=body["recipe_id"])
+remove =  barnRepository.removeRecipe(data=dto)
+print(remove)
+'''
