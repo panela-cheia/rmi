@@ -21,6 +21,15 @@ from adapters.barn.search_recipe_adapter import SearchRecipeAdapter
 from adapters.barn.remove_recipe_adapter import RemoveRecipeAdapter
 from adapters.users.search_in_users_barn_adapter import SearchInUsersBarnAdapter
 
+
+from adapters.files.create_file_adapter import CreateFileAdapter
+from adapters.files.delete_file_adapter import DeleteFileAdapter
+
+from adapters.recipes.create_recipe_adapter import CreateRecipeAdapter
+from adapters.recipes.list_recipe_adapter import ListRecipeAdapter
+from adapters.recipes.reaction_recipe_adapter import ReactionRecipeAdapter
+from adapters.recipes.search_recipe_adapter import SearchRecipeAdapter
+
 if __name__ == "__main__":
     Pyro5.server.serve({
         CreateUserAdapter:"adapters.create_user_adapter",
@@ -31,6 +40,12 @@ if __name__ == "__main__":
         ListOthersUsersAdapter:"adapters.list_others_users_adapter",
         SaveRecipeAdapter:"adapters.save_recipe_adapter",
         SearchRecipeAdapter:"adapters.search_recipe_adapter",
-        RemoveRecipeAdapter:"adapters.remove_recipe_adapter"
-        SearchInUsersBarnAdapter:"adapters.search_in_users_barn_adapter"
+        RemoveRecipeAdapter:"adapters.remove_recipe_adapter",
+        SearchInUsersBarnAdapter:"adapters.search_in_users_barn_adapter",
+        CreateFileAdapter:"adapters.create_file_adapter",
+        DeleteFileAdapter:"adapters.delete_file_adapter",
+        CreateRecipeAdapter:"adapters.create_recipe_adapter",
+        ListRecipeAdapter:"adapters.list_recipe_adapter",
+        ReactionRecipeAdapter:"adapters.reaction_recipe_adapter",
+        SearchRecipeAdapter:"adapters.search_recipe_adapter"
     }, use_ns=True)
