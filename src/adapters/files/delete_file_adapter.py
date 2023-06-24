@@ -22,8 +22,8 @@ class DeleteFileAdapter(object):
         archive = self.useCase.execute(deleteFileDTO=dto)
         
         if "error" in archive:
-            logger.error("{topic} - {response}",topic=Topics.FILE_CREATE.value,response=json.dumps(archive,indent=4,ensure_ascii=False))
+            logger.error("{topic} - {response}",topic=Topics.FILE_DELETE.value,response=json.dumps(archive,indent=4,ensure_ascii=False))
         else:
-            logger.info("{topic} - {response}",topic=Topics.FILE_CREATE.value,response=json.dumps(archive,indent=4,ensure_ascii=False))
+            logger.info("{topic} - {response}",topic=Topics.FILE_DELETE.value,response=json.dumps(archive,indent=4,ensure_ascii=False))
 
         return archive

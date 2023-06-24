@@ -27,8 +27,8 @@ class ReactionRecipeAdapter(object):
         recipe = self.useCase.execute(reaction_data=dto)
         
         if "error" in recipe:
-            logger.error("{topic} - {response}",topic=Topics.FILE_CREATE.value,response=json.dumps(recipe,indent=4,ensure_ascii=False))
+            logger.error("{topic} - {response}",topic=Topics.RECIPE_REACTION.value,response=json.dumps(recipe,indent=4,ensure_ascii=False))
         else:
-            logger.info("{topic} - {response}",topic=Topics.FILE_CREATE.value,response=json.dumps(recipe,indent=4,ensure_ascii=False))
+            logger.info("{topic} - {response}",topic=Topics.RECIPE_REACTION.value,response=json.dumps(recipe,indent=4,ensure_ascii=False))
 
         return recipe
