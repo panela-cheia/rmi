@@ -14,6 +14,9 @@ class ListOthersUseCase:
             
         users = self.userRepository.findOther(id)
 
-        serialized_users = [serialize_user(user) for user in users]
+        serialized_users = []
+
+        for user in users:
+            serialized_users.append(serialize_user(user))
 
         return serialized_users

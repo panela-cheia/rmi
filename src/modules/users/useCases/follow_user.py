@@ -14,22 +14,22 @@ class FollowUserUseCase:
         # Verificar se o usuário existe
         user = self.userRepository.findById(id=user_id)
         if not user:
-            raise ValueError("User does not exist")
+            return { "error":"User does not exist" }
 
         # Verificar se o usuário está tentando seguir a si mesmo
         if user_id == follow_id:
-            raise ValueError("Cannot follow yourself")
+            return { "error":"Cannot follow yourself" }
 
         # Verificar se o usuário a ser seguido existe
         follow_user = self.userRepository.findById(id=follow_id)
         if not follow_user:
-            raise ValueError("User to follow does not exist")
+            return { "error": "User to follow does not exist" }
 
         # Verificar se o usuário já está seguindo o usuário a ser seguido
         existing_follow = self.userRepository.verifyFollowing(follower=user_id,following=follow_id)
         
         if existing_follow:
-            raise ValueError("Already following this user")
+            return { "error":"Already following this user" }
 
         # Criar o relacionamento de seguir
         self.userRepository.followUser(user_id=user_id,follow_id=follow_id)
