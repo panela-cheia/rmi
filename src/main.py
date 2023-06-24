@@ -53,7 +53,7 @@ from adapters.search.search_dive_and_users_adapter import SearchDiveAndUsersAdap
 if __name__ == "__main__":
     Pyro5.server.serve({
         CreateUserAdapter:"adapters.create_user_adapter",
-        LoginUserAdapter: "adapters.user_login_login_adapter",
+        LoginUserAdapter: "adapters.user_login_adapter",
         LoginUserWithUsernameAdapter:"adapters.login_user_with_username_adapter",
         FollowUserAdapter: "adapters.follow_user_adapter",
         ListAllUsersAdapter:"adapters.list_all_users_adapters",
