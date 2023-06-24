@@ -16,11 +16,19 @@ from adapters.users.create_user_adapter import CreateUserAdapter
 from adapters.users.follow_user_adapter import FollowUserAdapter
 from adapters.users.list_all_users_adapters import ListAllUsersAdapter
 from adapters.users.list_others_users_adapter import ListOthersUsersAdapter
+from adapters.users.search_in_users_barn_adapter import SearchInUsersBarnAdapter
+
 from adapters.barn.save_recipe_adapter import SaveRecipeAdapter
 from adapters.barn.search_recipe_adapter import SearchRecipeAdapter
 from adapters.barn.remove_recipe_adapter import RemoveRecipeAdapter
-from adapters.users.search_in_users_barn_adapter import SearchInUsersBarnAdapter
 
+from adapters.dive.create_dive_adapter import CreateDiveAdapter
+from adapters.dive.enter_dive_adapter import EnterDiveAdapter
+from adapters.dive.exit_dive_adapter import ExitDiveAdapter
+from adapters.dive.list_dive_recipes_adapter import ListDiveRecipeAdapter
+from adapters.dive.list_users_adapter import ListUsersAdapter
+from adapters.dive.search_dive_adapter import SearchDiveAdapter
+from adapters.dive.update_dive_adapter import UpdateDiveAdapter
 
 from adapters.files.create_file_adapter import CreateFileAdapter
 from adapters.files.delete_file_adapter import DeleteFileAdapter
@@ -47,5 +55,12 @@ if __name__ == "__main__":
         CreateRecipeAdapter:"adapters.create_recipe_adapter",
         ListRecipeAdapter:"adapters.list_recipe_adapter",
         ReactionRecipeAdapter:"adapters.reaction_recipe_adapter",
-        SearchRecipeAdapter:"adapters.search_recipe_adapter"
+        SearchRecipeAdapter:"adapters.search_recipe_adapter",
+        CreateDiveAdapter:"adapters.create_dive_adapter",
+        EnterDiveAdapter:"adapters.enter_dive_adapter",
+        ExitDiveAdapter:"adapters.exit_dive_adapter",
+        ListDiveRecipeAdapter:"adapters.list_dive_recipes_adapter",
+        ListUsersAdapter:"adapters.list_users_adapter",
+        SearchDiveAdapter:"adapters.search_dive_adapter",
+        UpdateDiveAdapter:"adapters.update_dive_adapter"
     }, use_ns=True)

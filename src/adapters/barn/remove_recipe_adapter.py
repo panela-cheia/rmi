@@ -20,11 +20,11 @@ class RemoveRecipeAdapter(object):
             recipeId=recipeId
         )
         
-        user = self.useCase.execute(data=dto)
+        barn = self.useCase.execute(data=dto)
         
-        if "error" in user:
-            logger.error("{topic} - {user}", topic=Topics.BARN_REMOVE_RECIPE.value, user=json.dumps(user, indent=4, ensure_ascii=False))
+        if "error" in barn:
+            logger.error("{topic} - {barn}", topic=Topics.BARN_REMOVE_RECIPE.value, barn=json.dumps(barn, indent=4, ensure_ascii=False))
         else:
-            logger.info("{topic} - {user}", topic=Topics.BARN_REMOVE_RECIPE.value, user=json.dumps(user, indent=4, ensure_ascii=False))
+            logger.info("{topic} - {barn}", topic=Topics.BARN_REMOVE_RECIPE.value, barn=json.dumps(barn, indent=4, ensure_ascii=False))
             
-        return user
+        return barn
