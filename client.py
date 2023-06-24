@@ -149,3 +149,27 @@ test = Proxy("PYRONAME:adapters.update_dive_adapter")
 result = test.execute(id="d2066594-3c31-4342-b51a-ae2f20ea4683", name="teste", fileId="", description="")
 print(result)
 '''
+
+'''
+test = Proxy("PYRONAME:adapters.create_ingredients_unit_adapter")
+result = test.execute(name="teste")
+print(result)
+'''
+
+'''
+test = Proxy("PYRONAME:adapters.create_ingredients_unit_adapter")
+result = test.execute(name="teste")
+print(result)
+'''
+
+'''
+test = Proxy("PYRONAME:adapters.list_ingredients_unit_adapter")
+result = test.execute()
+print(result)
+'''
+
+'''
+test = Proxy("PYRONAME:adapters.delete_ingredients_unit_adapter")
+result = test.execute(id="d311fae1-4ec9-4cd0-b93e-b7a56e41a2e6")
+print(result)
+'''

@@ -7,7 +7,6 @@ class CreateIngredientsUnitUseCase:
         self.repository = repository
 
     def execute(self,name:str):
-
         try:
             verifyIfUnitAlreadyBeenRegistered = self.repository.findByName(name=name)
 

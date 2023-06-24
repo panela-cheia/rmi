@@ -44,6 +44,10 @@ from adapters.recipes.list_recipe_adapter import ListRecipeAdapter
 from adapters.recipes.reaction_recipe_adapter import ReactionRecipeAdapter
 from adapters.recipes.search_recipe_adapter import SearchRecipeAdapter
 
+from adapters.ingredients_unit.create_ingredients_unit_adapter import CreateIngredientsUnitAdapter
+from adapters.ingredients_unit.delete_ingredients_unit_adapter import DeleteIngredientsUnitAdapter
+from adapters.ingredients_unit.list_ingredients_unit_adapter import ListIngredientsUnitAdapter
+
 if __name__ == "__main__":
     Pyro5.server.serve({
         CreateUserAdapter:"adapters.create_user_adapter",
@@ -77,5 +81,9 @@ if __name__ == "__main__":
         ListDiveRecipeAdapter:"adapters.list_dive_recipes_adapter",
         SearchDiveAdapter:"adapters.search_dive_adapter",
         UpdateDiveAdapter:"adapters.update_dive_adapter",
-        ListUsersAdapter:"adapters.list_users_adapter"
+        ListUsersAdapter:"adapters.list_users_adapter",
+
+        CreateIngredientsUnitAdapter:"adapters.create_ingredients_unit_adapter",
+        DeleteIngredientsUnitAdapter:"adapters.delete_ingredients_unit_adapter",
+        ListIngredientsUnitAdapter:"adapters.list_ingredients_unit_adapter"
     }, use_ns=True)
