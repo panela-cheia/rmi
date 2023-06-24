@@ -10,13 +10,19 @@ import Pyro5.server
 Pyro5.config.SERVERTYPE = "thread"
 
 # adapters
+from adapters.users.create_user_adapter import CreateUserAdapter
 from adapters.users.login_user_adapter import LoginUserAdapter
 from adapters.users.login_user_with_username_adapter import LoginUserWithUsernameAdapter
-from adapters.users.create_user_adapter import CreateUserAdapter
 from adapters.users.follow_user_adapter import FollowUserAdapter
 from adapters.users.list_all_users_adapters import ListAllUsersAdapter
 from adapters.users.list_others_users_adapter import ListOthersUsersAdapter
 from adapters.users.search_in_users_barn_adapter import SearchInUsersBarnAdapter
+from adapters.users.search_users_adapter import SearchUsersAdapter
+from adapters.users.unfollow_user_adapter import UnfollowUserAdapter
+from adapters.users.update_photo_user_adapter import UpdatePhotoUserAdapter
+from adapters.users.update_user_adapter import UpdateUserAdapter
+from adapters.users.user_profile_adapter import UserProfileAdapter
+from adapters.users.users_barn_adapter import UserBarnAdapter
 
 from adapters.barn.save_recipe_adapter import SaveRecipeAdapter
 from adapters.barn.search_recipe_adapter import SearchRecipeAdapter
@@ -46,21 +52,30 @@ if __name__ == "__main__":
         FollowUserAdapter: "adapters.follow_user_adapter",
         ListAllUsersAdapter:"adapters.list_all_users_adapters",
         ListOthersUsersAdapter:"adapters.list_others_users_adapter",
+        SearchInUsersBarnAdapter:"adapters.search_in_users_barn_adapter",
+        SearchUsersAdapter: "adapters.search_users_adapter",
+        UnfollowUserAdapter: "adapters.unfollow_user_adapter",
+        UpdatePhotoUserAdapter: "adapters.update_photo_user_adapter",
+        UpdateUserAdapter:"adapters.update_user_adapter",
+        UserProfileAdapter:"adapters.user_profile_adapter",
+        UserBarnAdapter:"adapters.users_barn_adapter",
+
         SaveRecipeAdapter:"adapters.save_recipe_adapter",
         SearchRecipeAdapter:"adapters.search_recipe_adapter",
         RemoveRecipeAdapter:"adapters.remove_recipe_adapter",
-        SearchInUsersBarnAdapter:"adapters.search_in_users_barn_adapter",
-        CreateFileAdapter:"adapters.create_file_adapter",
-        DeleteFileAdapter:"adapters.delete_file_adapter",
         CreateRecipeAdapter:"adapters.create_recipe_adapter",
         ListRecipeAdapter:"adapters.list_recipe_adapter",
         ReactionRecipeAdapter:"adapters.reaction_recipe_adapter",
         SearchRecipeAdapter:"adapters.search_recipe_adapter",
+        
+        CreateFileAdapter:"adapters.create_file_adapter",
+        DeleteFileAdapter:"adapters.delete_file_adapter",
+                
         CreateDiveAdapter:"adapters.create_dive_adapter",
         EnterDiveAdapter:"adapters.enter_dive_adapter",
         ExitDiveAdapter:"adapters.exit_dive_adapter",
         ListDiveRecipeAdapter:"adapters.list_dive_recipes_adapter",
-        ListUsersAdapter:"adapters.list_users_adapter",
         SearchDiveAdapter:"adapters.search_dive_adapter",
-        UpdateDiveAdapter:"adapters.update_dive_adapter"
+        UpdateDiveAdapter:"adapters.update_dive_adapter",
+        ListUsersAdapter:"adapters.list_users_adapter"
     }, use_ns=True)

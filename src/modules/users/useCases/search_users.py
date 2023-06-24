@@ -5,12 +5,15 @@ class SearchUsersUseCase:
     def __init__(self,userRepository:UserRepository) -> None:
         self.userRepository = userRepository
 
-    async def execute(self,user_id:str,value:str):
-        users = await self.userRepository.searchUser(user_id=user_id,value=value)
+    def execute(self,user_id:str,value:str):
+        users = self.userRepository.searchUser(user_id=user_id,value=value)
 
         results = [ ]
 
+        print(users)
+
         for user in users:
+            print(user)
             results.append(searchUsersSerializator(user))
 
         return results
