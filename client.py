@@ -173,3 +173,7 @@ test = Proxy("PYRONAME:adapters.delete_ingredients_unit_adapter")
 result = test.execute(id="d311fae1-4ec9-4cd0-b93e-b7a56e41a2e6")
 print(result)
 '''
+
+test = Proxy("PYRONAME:adapters.search_dive_and_users_adapter")
+result = test.execute(user_id="64542159-4fff-40ed-a22c-a3d0d5eb9196",search_value="a")
+print(result)
