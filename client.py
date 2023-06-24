@@ -17,3 +17,21 @@ test = Proxy("PYRONAME:adapters.list_others_users_adapter")
 result = test.execute(id="b5764f89-c00b-4b2d-b45f-f0782e14a99f")
 print(result)
 '''
+
+'''
+test = Proxy("PYRONAME:adapters.save_recipe_adapter")
+result = test.execute(barnId="fef1b59f-db5a-46b3-8ba2-d306447c4b00", recipeId="b523820d-0973-4bf7-b39f-03778713925b")
+print(result)
+'''
+
+'''
+test = Proxy("PYRONAME:adapters.search_recipe_adapter")
+result = test.execute(barnId="fef1b59f-db5a-46b3-8ba2-d306447c4b00", recipeName="dive-2")
+print(result)
+'''
+
+'''
+test = Proxy("PYRONAME:adapters.remove_recipe_adapter")
+result = test.execute(barnId="fef1b59f-db5a-46b3-8ba2-d306447c4b00", recipeId="b523820d-0973-4bf7-b39f-03778713925b")
+print(result)
+'''
