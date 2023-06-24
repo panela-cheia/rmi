@@ -10,7 +10,7 @@ from modules.barn.repositories.barn_repository import BarnRepository
 from modules.barn.useCases.search_recipe import SearhRecipeUseCase, SearchRecipeInBarnDTO
 
 @Pyro5.server.expose
-class SearchRecipeAdapter(object):
+class SearchRecipeBarnAdapter(object):
     def __init__(self) -> None:
         self.useCase = SearhRecipeUseCase(repository=BarnRepository())
 

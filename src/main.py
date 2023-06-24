@@ -25,7 +25,7 @@ from adapters.users.user_profile_adapter import UserProfileAdapter
 from adapters.users.users_barn_adapter import UserBarnAdapter
 
 from adapters.barn.save_recipe_adapter import SaveRecipeAdapter
-from adapters.barn.search_recipe_adapter import SearchRecipeAdapter
+from adapters.barn.search_recipe_barn_adapter import SearchRecipeBarnAdapter
 from adapters.barn.remove_recipe_adapter import RemoveRecipeAdapter
 
 from adapters.dive.create_dive_adapter import CreateDiveAdapter
@@ -52,6 +52,7 @@ from adapters.search.search_dive_and_users_adapter import SearchDiveAndUsersAdap
 
 if __name__ == "__main__":
     Pyro5.server.serve({
+        # USERS ADAPTERS
         CreateUserAdapter:"adapters.create_user_adapter",
         LoginUserAdapter: "adapters.user_login_adapter",
         LoginUserWithUsernameAdapter:"adapters.login_user_with_username_adapter",
@@ -66,25 +67,31 @@ if __name__ == "__main__":
         UserProfileAdapter:"adapters.user_profile_adapter",
         UserBarnAdapter:"adapters.users_barn_adapter",
 
-        SaveRecipeAdapter:"adapters.save_recipe_adapter",
-        SearchRecipeAdapter:"adapters.search_recipe_adapter",
+        # BARN ADAPTERS
         RemoveRecipeAdapter:"adapters.remove_recipe_adapter",
+        SaveRecipeAdapter:"adapters.save_recipe_adapter",
+        SearchRecipeBarnAdapter:"adapters.search_recipe_barn_adapter",
+
+        # RECIPES UNIT ADAPTERS
         CreateRecipeAdapter:"adapters.create_recipe_adapter",
         ListRecipeAdapter:"adapters.list_recipe_adapter",
         ReactionRecipeAdapter:"adapters.reaction_recipe_adapter",
         SearchRecipeAdapter:"adapters.search_recipe_adapter",
         
+        # FILES ADAPTERS
         CreateFileAdapter:"adapters.create_file_adapter",
         DeleteFileAdapter:"adapters.delete_file_adapter",
-                
+
+        # DIVE ADAPTERS
         CreateDiveAdapter:"adapters.create_dive_adapter",
         EnterDiveAdapter:"adapters.enter_dive_adapter",
         ExitDiveAdapter:"adapters.exit_dive_adapter",
         ListDiveRecipeAdapter:"adapters.list_dive_recipes_adapter",
+        ListUsersAdapter:"adapters.list_users_adapter",
         SearchDiveAdapter:"adapters.search_dive_adapter",
         UpdateDiveAdapter:"adapters.update_dive_adapter",
-        ListUsersAdapter:"adapters.list_users_adapter",
-
+        
+        # INGREDIENTS UNIT ADAPTERS
         CreateIngredientsUnitAdapter:"adapters.create_ingredients_unit_adapter",
         DeleteIngredientsUnitAdapter:"adapters.delete_ingredients_unit_adapter",
         ListIngredientsUnitAdapter:"adapters.list_ingredients_unit_adapter",
