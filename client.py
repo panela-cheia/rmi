@@ -35,3 +35,15 @@ test = Proxy("PYRONAME:adapters.remove_recipe_adapter")
 result = test.execute(barnId="fef1b59f-db5a-46b3-8ba2-d306447c4b00", recipeId="b523820d-0973-4bf7-b39f-03778713925b")
 print(result)
 '''
+
+'''
+test = Proxy("PYRONAME:adapters.login_user_with_username_adapter")
+result = test.execute(username="@moviepapa",password="12345678")
+print(result)
+'''
+
+'''
+test = Proxy("PYRONAME:adapters.search_in_users_barn_adapter")
+result = test.execute(user_id="6809d450-68e0-479f-91e1-7d2d5c52ad90",value="a")
+print(result)
+'''
