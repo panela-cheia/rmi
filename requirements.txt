@@ -9,3 +9,4 @@ pytz==2019.3
 typing-extensions==4.6.3
 loguru==0.7.0
 Pyro5==5.14
+SQLAlchemy==1.4.48
