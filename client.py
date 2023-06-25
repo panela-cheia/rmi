@@ -174,6 +174,62 @@ result = test.execute(id="d311fae1-4ec9-4cd0-b93e-b7a56e41a2e6")
 print(result)
 '''
 
-test = Proxy("PYRONAME:adapters.search_dive_and_users_adapter")
-result = test.execute(user_id="64542159-4fff-40ed-a22c-a3d0d5eb9196",search_value="a")
-print(result)
+list_ingredients = [
+    {
+        "name":"Unidade"
+    },
+        {
+        "name":"Miligrama (mg)"
+    },
+        {
+        "name":"Copo"
+    },
+        {
+        "name":"Fio"
+    },
+        {
+        "name":"Grama (g)"
+    },
+        {
+        "name":"Pitada"
+    },
+    {
+        "name":"Litro (l)"
+    },
+        {
+        "name":"Raspas"
+    },
+        {
+        "name":"Tablete"
+    },
+        {
+        "name":"Ramo"
+    },
+        {
+        "name":"Colher de chá (c.c.)"
+    },
+        {
+        "name":"Mililitro (ml)"
+    },
+    {
+        "name":"Xícara (xíc.)"
+    },
+        {
+        "name":"Filete"
+    },
+        {
+        "name":"Colher de sopa (c.s.)"
+    },
+        {
+        "name":"Quilograma (kg)"
+    },
+        {
+        "name":"Punhado"
+    }
+]
+
+test = Proxy("PYRONAME:adapters.create_ingredients_unit_adapter")
+
+for ingredient in list_ingredients:
+    result = test.execute(name=ingredient["name"])
+    print(result)
