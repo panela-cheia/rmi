@@ -8,7 +8,8 @@ def listDiveSerializator(dive):
             "id": dive.photo.id,
             "name": dive.photo.name,
             "path": dive.photo.path
-        } if dive.photo else None
+        } if dive.photo else None,
+        "owner_id": dive.owner_id
     }
 
     return response
