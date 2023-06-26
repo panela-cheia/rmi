@@ -21,6 +21,10 @@ def recipeSerializator(recipe, reactions):
                 "path": recipe.user.photo.path
             } if recipe.user.photo else None
         },
+        "dive":{
+            "id": recipe.dive.id,
+            "name": recipe.dive.name,
+        } if recipe.dive else None,
         "photo": {
             "id": recipe.photo.id,
             "name": recipe.photo.name,
