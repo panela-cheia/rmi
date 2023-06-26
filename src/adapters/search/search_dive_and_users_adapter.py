@@ -25,8 +25,8 @@ class SearchDiveAndUsersAdapter(object):
         search = self.useCase.execute(data=dto)
         
         if "error" in search:
-            logger.error("{topic} - {response}",topic=Topics.FILE_CREATE.value,response=json.dumps(search,indent=4,ensure_ascii=False))
+            logger.error("{topic} - {response}",topic=Topics.SEARCH_DIVE_AND_USERS.value,response=json.dumps(search,indent=4,ensure_ascii=False))
         else:
-            logger.info("{topic} - {response}",topic=Topics.FILE_CREATE.value,response=json.dumps(search,indent=4,ensure_ascii=False))
+            logger.info("{topic} - {response}",topic=Topics.SEARCH_DIVE_AND_USERS.value,response=json.dumps(search,indent=4,ensure_ascii=False))
 
         return search

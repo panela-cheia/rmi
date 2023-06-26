@@ -174,6 +174,7 @@ result = test.execute(id="d311fae1-4ec9-4cd0-b93e-b7a56e41a2e6")
 print(result)
 '''
 
+'''
 list_ingredients = [
     {
         "name":"Unidade"
@@ -233,3 +234,10 @@ test = Proxy("PYRONAME:adapters.create_ingredients_unit_adapter")
 for ingredient in list_ingredients:
     result = test.execute(name=ingredient["name"])
     print(result)
+
+'''
+
+
+test = Proxy("PYRONAME:adapters.user_login_adapter")
+result = test.execute(email="luciano.alcantara@ufv.br",password="12345678")
+print(result)

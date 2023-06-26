@@ -9,13 +9,13 @@ class SearhRecipeUseCase:
 
     def execute(self, data: SearchRecipeInBarnDTO):
         barns =  self.repository.findAll(barnId=data.barnId)
-        # print(barns)
         if barns is None:
             return []
         
         recipes = []
 
         for recipe in barns.recipes:
-            recipes.append(recipeWithoutReactionsSerializator(recipe=recipe))
+            if data.recipeName.lower() in recipe.name.lower():
+                recipes.append(recipeWithoutReactionsSerializator(recipe=recipe))
 
         return recipes

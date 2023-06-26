@@ -50,7 +50,17 @@ class UserRepository:
     def findByEmail(self, email):
         session = self.orm.get_session()
 
-        user = session.query(User).filter(User.email == email).options(joinedload('barn')).first()
+        user = session.query(User).filter(User.email == email).\
+                options(
+                    joinedload('barn'),
+                    joinedload('followers'),
+                    joinedload('following'),
+                    joinedload('owners_dive'),
+                    joinedload('photo'),
+                    joinedload('reactions'),
+                    joinedload('recipes'),
+                    joinedload('users_dive')
+                ).first()
 
         session.close()
 
