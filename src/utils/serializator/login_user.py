@@ -4,6 +4,7 @@ def loginUserSerializator(user,token):
             "id":user.id,
             "name":user.name,
             "username":user.username,
+            "bio":user.bio,
             "email":user.email,
             "barnId": user.barn[0].id,
             "photo": {
