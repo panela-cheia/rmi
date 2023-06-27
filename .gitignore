@@ -166,7 +166,3 @@ lib64
 include/ 
 share/ 
 pyvenv.cfg
-
-*/*.db
-src/main.py
-src/tests/messages.py
