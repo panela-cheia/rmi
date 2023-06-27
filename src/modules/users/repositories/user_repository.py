@@ -1,307 +1,246 @@
-from shared.infra.prisma import prisma
+from database.infra.orm import ORM
+from database.schema.schema import User, File,Barn, Follows, UsersDive
 
+from sqlalchemy.orm import joinedload
 
 class UserRepository:
-    async def create(self, name, username, email, password):
-        await prisma.connect()
+    def __init__(self):
+        self.orm = ORM()
+    
+    def create(self, name, username, email, password):
+        session = self.orm.get_session()
 
-        user = await prisma.user.create(
-            data={
-                "name": name,
-                "username": username,
-                "email": email,
-                "password": password
-            }
-        )
+        user = User(name=name, username=username, email=email, password=password)
+        session.add(user)
+        session.commit()
 
-        await prisma.barn.create(
-            data={
-                "user": {
-                    "connect": {
-                        "id": user.id
-                    }
-                }
-            }
-        )
+        barn = Barn(user_id=user.id)
+        session.add(barn)
+        session.commit()
 
-        await prisma.disconnect()
+        user_dict = {
+            'id': user.id,
+            'name': user.name,
+            'username': user.username,
+            'email': user.email
+        }
 
-        return user
+        session.close()
 
-    async def findAll(self):
-        await prisma.connect()
+        return user_dict
 
-        users = await prisma.user.find_many(
-            include={
-                "barn": True,
-                "followers":True,
-                "following":True,
-                "ownersDive":True,
-                "photo":True,
-                "reactions":True,
-                "recipes":True,
-                "usersDive":True
-            }
-        )
+    def findAll(self):
+        session = self.orm.get_session()
 
-        await prisma.disconnect()
+        users = session.query(User).options(
+            joinedload('barn'),
+            joinedload('followers'),
+            joinedload('following'),
+            joinedload('owners_dive'),
+            joinedload('photo'),
+            joinedload('reactions'),
+            joinedload('recipes'),
+            joinedload('users_dive')
+        ).all()
+
+        session.close()
 
         return users
 
     def findByEmail(self, email):
-        prisma.connect()
+        session = self.orm.get_session()
 
-        user = prisma.user.find_unique(
-            where={
-                'email': email
-            },
-            include={
-                "barn":True
-            }
-        )
+        user = session.query(User).filter(User.email == email).\
+                options(
+                    joinedload('barn'),
+                    joinedload('followers'),
+                    joinedload('following'),
+                    joinedload('owners_dive'),
+                    joinedload('photo'),
+                    joinedload('reactions'),
+                    joinedload('recipes'),
+                    joinedload('users_dive')
+                ).first()
 
-        prisma.disconnect()
-
-        return user
-
-    async def findByUsername(self, username):
-        await prisma.connect()
-
-        user = await prisma.user.find_unique(
-            where={
-                "username": username
-            },
-            include={
-                "barn": True,
-                "followers":True,
-                "following":True,
-                "ownersDive":True,
-                "photo":True,
-                "reactions":True,
-                "recipes":True,
-                "usersDive":True
-            }
-        )
-
-        await prisma.disconnect()
+        session.close()
 
         return user
 
-    async def findById(self, id):
-        await prisma.connect()
+    def findByUsername(self, username):
 
-        user = await prisma.user.find_unique(
-            where={
-                "id": id
-            },
-            include={
-                "barn": True,
-                "followers":True,
-                "following":True,
-                "ownersDive":True,
-                "photo":True,
-                "reactions":True,
-                "recipes":{
-                    "include":{
-                        "ingredients":True,
-                        "reactions":True,
-                        "photo":True
-                    }
-                },
-                "usersDive":True
-            }
-        )
+        session = self.orm.get_session()
 
-        await prisma.disconnect()
+        user = session.query(User).\
+            filter(User.username == username).\
+                options(
+                    joinedload('barn'),
+                    joinedload('followers'),
+                    joinedload('following'),
+                    joinedload('owners_dive'),
+                    joinedload('photo'),
+                    joinedload('reactions'),
+                    joinedload('recipes'),
+                    joinedload('users_dive')
+                ).first()
+
+        session.close()
 
         return user
 
-    async def update(self, id, name, username, bio):
-        await prisma.connect()
+    def findById(self, id):
+        session = self.orm.get_session()
 
-        user = await prisma.user.update(
-            where={
-                "id": id
-            },
-            data={
-                "name": name,
-                "username": username,
-                "bio": bio
-            }
-        )
+        user = session.query(User).options(
+            joinedload('barn'),
+            joinedload('followers'),
+            joinedload('following'),
+            joinedload('owners_dive'),
+            joinedload('photo'),
+            joinedload('reactions'),
+            joinedload('recipes').joinedload('ingredients'),
+            joinedload('recipes').joinedload('reactions'),
+            joinedload('recipes').joinedload('photo'),
+            joinedload('users_dive')
+        ).filter(User.id == id).first()
 
-        await prisma.disconnect()
-
-        return user
-
-    async def updatePhoto(self, id, photo):
-        await prisma.connect()
-
-        user = await prisma.user.update(
-            where={
-                'id': id
-            },
-            data={
-                "photo": {
-                    "connect": {
-                        "id":photo
-                    }
-                }
-            },
-            include={
-                "photo":True,
-            }
-        )
-
-        await prisma.disconnect()
+        session.close()
 
         return user
 
-    async def delete(self, id):
-        await prisma.connect()
+    def update(self, id, name, username, bio):
+        session = self.orm.get_session()
 
-        user = await prisma.user.delete(
-            where={
-                'id': id
-            }
-        )
+        user = session.query(User).filter(User.id == id).first()
+        user.name = name
+        user.username = username
+        user.bio = bio
+        session.commit()
 
-        await prisma.disconnect()
+        # Recarrega o usuário após a atualização
+        session.refresh(user)
+
+        session.close()
 
         return user
 
-    async def verifyFollowing(self, follower: str, following: str) -> bool:
-        await prisma.connect()
+    def updatePhoto(self, id, photo_id):
+        session = self.orm.get_session()
 
-        values = await prisma.follows.find_first(
-            where={
-                "followerId": follower,
-                "followingId": following
-            }
-        )
+        user = session.query(User).filter(User.id == id).first()
+        photo = session.query(File).filter(File.id == photo_id).first()
 
-        await prisma.disconnect()
+        if user:
+            # Atualiza a foto existente ou atribui uma nova foto
+            user.photo = photo
 
-        return values is not None
+            session.merge(user)
+            session.commit()
 
-    async def followUser(self, user_id: str, follow_id: str):
-        await prisma.connect()
+            # Recarrega o usuário da sessão para refletir as alterações
+            session.refresh(user)
 
-        values = await prisma.follows.create(
-            data={
-                "follower": {"connect": {"id": user_id}},
-                "following": {"connect": {"id": follow_id}}
-            }
-        )
+        session.close()
 
-        await prisma.disconnect()
-        return values
+        return user
 
-    async def deleteFollow(self, user_id: str, unfollow_id: str):
-        await prisma.connect()
+    def delete(self, id):
 
-        await prisma.follows.delete(
-            where={
-                "followerId_followingId": {
-                    "followerId": user_id,
-                    "followingId": unfollow_id
-                }
-            }
-        )
+        session = self.orm.get_session()
 
-        await prisma.disconnect()
+        user = session.query(User).filter(User.id == id).first()
+        session.delete(user)
+        session.commit()
 
-    async def findOther(self, id: str):
-        await prisma.connect()
+        session.close()
 
-        users = await prisma.user.find_many(
-            where={
-                "id": {
-                    "not": id
-                }
-            },
-            order={
-                'username': 'asc',
-            },
-            include={
-                "barn": True,
-                "followers":True,
-                "following":True,
-                "ownersDive":True,
-                "photo":True,
-                "reactions":True,
-                "recipes":True,
-                "usersDive":True
-            }
-        )
+        return user
 
-        await prisma.disconnect()
+    def verifyFollowing(self, follower, following):
+
+        session = self.orm.get_session()
+        follows = session.query(Follows).filter(Follows.follower_id == follower, Follows.following_id == following).first()
+
+        session.close()
+
+        return follows is not None
+
+    def followUser(self, user_id, follow_id):
+
+        session = self.orm.get_session()
+
+        follow = Follows(follower_id=user_id, following_id=follow_id)
+        session.add(follow)
+        session.commit()
+
+        session.close()
+
+        return follow
+
+    def deleteFollow(self, user_id, unfollow_id):
+
+        session = self.orm.get_session()
+
+        session.query(Follows).filter(Follows.follower_id == user_id, Follows.following_id == unfollow_id).delete()
+        session.commit()
+
+        session.close()
+
+    def findOther(self, id):
+
+        session = self.orm.get_session()
+
+        users = session.query(User).filter(User.id != id).options(
+            joinedload('barn'),
+            joinedload('followers'),
+            joinedload('following'),
+            joinedload('owners_dive'),
+            joinedload('photo'),
+            joinedload('reactions'),
+            joinedload('recipes'),
+            joinedload('users_dive')
+        ).all()
+
+        session.close()
 
         return users
-    
-    async def searchUser(self,user_id:str,value:str):
-        await prisma.connect()
 
-        users = await prisma.user.find_many(
-            where={
-                "OR":[
-                    {
-                        "name":{
-                            "contains":value
-                        }
-                    },
-                    {
-                        "username":{
-                            "contains":value
-                        }
-                    }
-                ],
-                "NOT":{
-                    "id":user_id
-                }
-            },
-            include={
-                "photo":True,
-                "followers":True,
-                "usersDive":True
-            },
-            order={
-                "username":"asc"
-            }
-        )
+    def searchUser(self, user_id, value):
+        session = self.orm.get_session()
+
+        users = session.query(User).filter(
+            (User.name.contains(value) | User.username.contains(value)) & (User.id != user_id)
+        ).options(
+            joinedload('barn'),
+            joinedload('followers'),
+            joinedload('following'),
+            joinedload('owners_dive'),
+            joinedload('photo'),
+            joinedload('reactions'),
+            joinedload('recipes'),
+            joinedload('users_dive')
+        ).all()
 
         results = []
 
         for user in users:
-            common_followers = 0
-            common_dives = 0
+            common_followers = session.query(Follows).filter(
+                Follows.following_id == user.id,  # Use 'user.id' em vez de 'user_id'
+                Follows.follower_id == user_id
+            ).count()
 
-            
-            if user.followers is not None:
-                common_followers = await prisma.follows.count(
-                    where={
-                        "followingId":user_id,
-                        "followerId":user.id
-                    }
-                )
-            
-            if user.usersDive is not None:
-                common_dives = await prisma.usersdive.count(
-                    where={
-                        "userId":user_id,
-                        "diveId":{"in":[users_dive.diveId for users_dive in user.usersDive]}
-                    }
-                )
+            common_dives = session.query(UsersDive).filter(
+                UsersDive.user_id == user_id,
+                UsersDive.dive_id.in_([users_dive.dive_id for users_dive in user.users_dive])
+            ).count()
 
             result = {
-                "user":user,
-                "common_followers":common_followers,
+                "user": user,
+                "common_followers": common_followers,
                 "common_dives": common_dives
             }
 
             results.append(result)
 
-
-        await prisma.disconnect()
+        session.close()
 
         return results

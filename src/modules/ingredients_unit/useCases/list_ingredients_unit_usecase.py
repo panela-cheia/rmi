@@ -3,18 +3,20 @@ from modules.ingredients_unit.repositories.ingredients_unit_repository import In
 from utils.serializator.ingredients_unit import ingredientsUnitSerializator
 
 class ListIngredientsUnitUseCase:
-    def __init__(self,repository:IngredientsUnitRepository) -> None:
+    def __init__(self, repository: IngredientsUnitRepository) -> None:
         self.repository = repository
 
-    async def execute(self):
+    def execute(self):
         try:
-            units = await self.repository.findAll()
+            units = self.repository.findAll()
 
             data = []
 
             for unit in units:
-                data.append(ingredientsUnitSerializator(ingredientsUnit=unit))
+
+                data.append(ingredientsUnitSerializator(
+                    ingredientsUnit={"id": unit.id, "name": unit.name}))
 
             return data
         except (ValueError):
-            raise Exception(ValueError)
+            return {"error": ValueError}

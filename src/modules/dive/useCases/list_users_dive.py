@@ -6,8 +6,8 @@ class ListUserDiveUseCase:
     def __init__(self, repository: DiveRepository) -> None:
         self.repository = repository
 
-    async def execute(self, user_id: str):
-        dives = await self.repository.findUserDive(user_id=user_id)
+    def execute(self, user_id: str):
+        dives = self.repository.findUserDive(user_id=user_id)
 
         final_dives = []
         for dive in dives:

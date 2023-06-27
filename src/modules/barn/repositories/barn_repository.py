@@ -1,81 +1,46 @@
-from shared.infra.prisma import prisma
+from sqlalchemy.orm import joinedload
+
+from database.schema.schema import Barn, Recipe
+from database.infra.orm import ORM
 
 from modules.barn.dtos.save_recipe_dto import BarnSaveRecipeDTO
 from modules.barn.dtos.remove_recipe_dto import RemoveRecipeDTO
 
+
 class BarnRepository:
+    def __init__(self):
+        self.orm = ORM()
 
-    async def save(self, data:BarnSaveRecipeDTO):
+    def save(self, data: BarnSaveRecipeDTO):
+        session = self.orm.get_session()
 
-        await prisma.connect()
+        barn = session.query(Barn).filter_by(id=data.barnId).first()
+        recipe = session.query(Recipe).filter_by(id=data.recipeId).first()
 
-        barn = await prisma.barn.update(
-            where={
-                "id": data.barnId
-            },
-            data={
-                "recipes":{
-                    "connect": [{ "id":data.recipeId }]
-                }
-            },
-            include={
-                "recipes":True,
-                "user":{
-                    "include":{
-                        "photo":True
-                    }
-                }
-            }
-        )
-
-
-        await prisma.disconnect()
+        barn.recipes.append(recipe)
+        session.commit()
 
         return barn
 
-    
-    async def findAll(self, barnId:str):
-        await prisma.connect()
+    def findAll(self, barnId: str):
+        session = self.orm.get_session()
+        barn = session.query(Barn).filter_by(id=barnId).options(
+            joinedload('recipes').joinedload('ingredients'),
+            joinedload('recipes').joinedload('photo')
+        ).first()
 
-        barns = await prisma.barn.find_first(
-            where={
-                "id": barnId
-            },
-            include={
-                "recipes":{
-                    "include":{
-                        "photo":True,
-                        "ingredients":True
-                    }
-                },
-                "user":True,
+        if barn:
+            return barn
+        else:
+            return None
 
-            }
-        )
+    def removeRecipe(self, data: RemoveRecipeDTO):
+        session = self.orm.get_session()
 
-        await prisma.disconnect()
+        barn = session.query(Barn).filter_by(id=data.barnId).first()
+        recipe = session.query(Recipe).filter_by(id=data.recipeId).first()
 
-        return barns
-    
-    async def removeRecipe(self, data:RemoveRecipeDTO):
-        await prisma.connect()
-
-        barn = await prisma.barn.update(
-            where={
-                "id": data.barnId
-            },
-            data={
-                "recipes":{
-                    "disconnect": [{ "id":data.recipeId }]
-                }
-            },
-            include={
-                "recipes":True,
-                "user":True
-            }
-        )
-
-
-        await prisma.disconnect()
+        barn.recipes.remove(recipe)
+        session.commit()
 
         return barn

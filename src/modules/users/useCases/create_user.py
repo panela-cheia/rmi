@@ -10,25 +10,26 @@ class CreateUserUseCase:
     def __init__(self,userRepository:UserRepository) -> None:
         self.userRepository = userRepository
 
-    async def execute(self, createUserDTO: CreateUserDTO):
+    def execute(self, createUserDTO: CreateUserDTO):
         passwordHash = hash(createUserDTO.password,8)
 
-        verifyIfEmailAlreadyBeenRegistered = await self.userRepository.findByEmail(createUserDTO.email)
+        verifyIfEmailAlreadyBeenRegistered = self.userRepository.findByEmail(createUserDTO.email)
 
         if verifyIfEmailAlreadyBeenRegistered:
-            raise CustomError("This email has already been registered")        
+            return {"error": "This email has already been registered" }
 
-        verifyIfUsernameAlreadyBeenRegistered = await self.userRepository.findByUsername(createUserDTO.username)
+        verifyIfUsernameAlreadyBeenRegistered = self.userRepository.findByUsername(createUserDTO.username)
 
         if verifyIfUsernameAlreadyBeenRegistered:
-            raise CustomError("This username has already been registered")
+            return {"error": "This username has already been registered"}
 
-        # Verifica se o username começa com '@'
+                # Verifica se o username começa com '@'
         if not createUserDTO.username.startswith('@'):
             createUserDTO.username = '@' + createUserDTO.username
 
+
         try:
-            user = await self.userRepository.create(
+            user = self.userRepository.create(
                 name=createUserDTO.name,
                 username=createUserDTO.username,
                 password=passwordHash,
@@ -36,5 +37,5 @@ class CreateUserUseCase:
             )
 
             return createUserSerializator(user=user)
-        except:
-            raise Exception("An error occurred during user creation")
+        except (ValueError):
+            raise { "error":ValueError }

@@ -5,8 +5,8 @@ class SearchRecipesUseCase:
     def __init__(self,repository:RecipeRepository) -> None:
         self.repository = repository
 
-    async def execute(self,name:str):
-        recipes =  await self.repository.search(name=name)
+    def execute(self,name:str):
+        recipes =  self.repository.search(name=name)
         
         data = []
 

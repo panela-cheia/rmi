@@ -1,13 +1,22 @@
 from modules.users.repositories.user_repository import UserRepository
 
+from utils.serializator.users_all import serialize_user
+
 class ListOthersUseCase:
     def __init__(self,userRepository:UserRepository) -> None:
         self.userRepository = userRepository
 
-    async def execute(self,id:str):
-        verifyIfUserExists = await self.userRepository.findById(id)
+    def execute(self,id:str):
+        verifyIfUserExists =  self.userRepository.findById(id)
 
         if not verifyIfUserExists:
             raise ValueError("Invalid user ID")
-        
-        return await self.userRepository.findOther(id)
+            
+        users = self.userRepository.findOther(id)
+
+        serialized_users = []
+
+        for user in users:
+            serialized_users.append(serialize_user(user))
+
+        return serialized_users

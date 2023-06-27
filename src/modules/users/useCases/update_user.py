@@ -7,15 +7,15 @@ class UpdateUserUseCase:
     def __init__(self,userRepository:UserRepository) -> None:
         self.userRepository = userRepository
 
-    async def execute(self, id:str,updateUserDTO: UpdateUserDTO):
+    def execute(self, id:str,updateUserDTO: UpdateUserDTO):
 
-        verifyIfUserAlreadyExists = await self.userRepository.findById(id=id)
+        verifyIfUserAlreadyExists = self.userRepository.findById(id=id)
 
         if not verifyIfUserAlreadyExists:
             raise Exception("User not exists")
 
         if updateUserDTO.username and updateUserDTO.username != verifyIfUserAlreadyExists.username:
-            verifyIfUsernameAlreadyBeenRegistered = await self.userRepository.findByUsername(updateUserDTO.username)
+            verifyIfUsernameAlreadyBeenRegistered = self.userRepository.findByUsername(updateUserDTO.username)
 
             if verifyIfUsernameAlreadyBeenRegistered:
                 raise CustomError("This username has already been registered")
@@ -25,12 +25,12 @@ class UpdateUserUseCase:
                 updateUserDTO.username = '@' + updateUserDTO.username
 
         try:
-            user = await self.userRepository.update(
+            user = self.userRepository.update(
                 id=id,
                 bio=updateUserDTO.bio,
                 name=updateUserDTO.name,
                 username=updateUserDTO.username,
             )
-            return  { "ok":"Successfully updated user: " + user["id"] }
+            return  { "ok":"Successfully updated user: " + user.__dict__["id"] }
         except:
             raise { "error":"An error occurred during user update" }

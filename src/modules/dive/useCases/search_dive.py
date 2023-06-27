@@ -5,8 +5,8 @@ class SearchDiveUseCase:
     def __init__(self, repository: DiveRepository):
         self.repository = repository
 
-    async def execute(self, diveName: str):
-        dives =  await self.repository.findAll(name=diveName)
+    def execute(self, diveName: str):
+        dives =  self.repository.findAll(name=diveName)
 
         all_dives = []
 

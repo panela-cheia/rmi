@@ -1,9 +1,9 @@
 aux1 = {
     "topic": "@user/create_user",
     "body": {
-        "name": "João da Silva",
-        "username": "@joaodasilva",
-        "email": "joao.da.silva@gmail.com",
+        "name": "Mendes",
+        "username": "@o.viniciusmendes",
+        "email": "vinicius@gmail.com",
         "password": "12345678"
     }
 }
@@ -11,7 +11,7 @@ aux1 = {
 aux2 = {
     "topic": "@user/login_with_email_user",
     "body": {
-        "email": "teste@gmail.com",
+        "email": "joao.da.silva@gmail.com",
         "password": "12345678"
     }
 }
@@ -19,7 +19,7 @@ aux2 = {
 aux3 = {
     "topic": "@user/login_with_username_user",
     "body": {
-        "username": "@teste",
+        "username": "@joaodasilva",
         "password": "12345678"
     }
 }
@@ -33,7 +33,7 @@ aux4 = {
 aux5 = {
     "topic": "@user/list_others_user",
     "body": {
-        "id": "f57255d9-afc0-478e-949b-0301f0bc05d0"
+        "id": "6809d450-68e0-479f-91e1-7d2d5c52ad90"
     }
 }
 
@@ -113,10 +113,10 @@ aux14 = {
 aux15 = {
     "topic": "@recipe/create_recipe",
     "body": {
-        "name": "dive-2",
+        "name": "dive-3",
         "description": "testar dive",
-        "userId": "75621072-e6b5-49ae-a5ff-424707d534b2",
-        "fileId": "9ca8bf00-8a55-4d47-93ed-36659d424567",
+        "userId": "64542159-4fff-40ed-a22c-a3d0d5eb9196",
+        "fileId": "fd337eb9-d292-493e-8835-e9f003e326e4",
         "ingredients": [
             {"name": "Ingredient 1", "amount": 1, "unit": "cup"},
             {"name": "Ingredient 2", "amount": 2, "unit": "teaspoon"},

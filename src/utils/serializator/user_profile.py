@@ -17,7 +17,7 @@ def userProfileSerializator(user):
             "name": user.photo.name,
             "path": user.photo.path
         } if user.photo else None,
-        "posts": str(len(user.recipes)) + " posts",
+        "posts": str(len(user.recipes)),
         "following":str(len(user.following)),
         "followers":str(len(user.followers)),
         "recipes":recipes

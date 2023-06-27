@@ -5,32 +5,56 @@ class ExitDiveUseCase:
     def __init__(self, repository: DiveRepository) -> None:
         self.repository = repository
     
-    async def execute(self, data:ExitDiveDTO):
-        # Verificar se o buteco a ser deixado existe
-        exit_dive = await self.repository.findDiveById(data.diveId)
-        if not exit_dive:
-            return { "error":"Dive does not exist" }
-        
-        if exit_dive.owner == data.user and data.new_owner:
-            verifyNewOwner = await self.repository.findById(id=data.new_owner)
-            if not verifyNewOwner:
-                return { "error":"User does not exist" }
+    def execute(self, data:ExitDiveDTO):
+        try:
             
-            await self.repository.updateDiveOwner(data.user,data.new_owner)
-        else:
+            # Verificar se o buteco a ser deixado existe
+            exit_dive = self.repository.findDiveById(data.diveId)
+
+            print(exit_dive)
+            if not exit_dive:
+                return { "error":"Dive does not exist" }
+            
             # Verificar se o usuário existe
-            user = await self.repository.findById(id=data.user)
+            user = self.repository.findById(id=data.user)
             if not user:
                 return { "error":"User does not exist" }
+    
+            # o usuario é owner
+            if exit_dive.owner.id == data.user and data.new_owner:
+                
+                # Verificar se o usuário existe
+                verify_new_owner_user = self.repository.findByUsername(username=data.new_owner)
+                if not verify_new_owner_user:
+                    return { "error":"New Owner user does not exist" }
+
+                # Verificar se o usuário que está saindo é um membro do dive
+                is_member = self.repository.findUserInDive(dive_id=data.diveId,user_id=verify_new_owner_user.id)
+                if is_member:
+                    # Remover o usuário como membro do dive
+                    self.repository.removeDiveMember(data.user, data.diveId)
+
+                    # atualiza o owner como new_owner
+                    self.repository.updateDiveOwner(data.diveId,verify_new_owner_user.id)
+
+                    response = { "ok": "Successfully left the dive and this dive has a new owner!" }
+                else:
+                    response = { "error": "To owner left the dive is required to be in the dive" }
+
+            elif exit_dive.owner.id == data.user and not data.new_owner:
+                response = { "error": "To owner left the dive is required new owner!" }
+
+            # usuario comum!
+            else:
+                # Verificar se o usuário que está saindo é um membro do dive
+                is_member = self.repository.findUserInDive(dive_id=data.diveId,user_id=data.user)
+                if is_member:
+                    # Remover o usuário como membro do dive
+                    self.repository.removeDiveMember(data.user, data.diveId)
+
+                    response = { "ok": "Successfully left the dive!" }
             
-            # Verificar se o usuário está tentando sair de um buteco que ele não está inserido
-            existing_dive = await self.repository.verifyEntry(user=data.user, dive=data.diveId)
+            return response
 
-            if not existing_dive:
-                return { "error":"Not in this dive" }
-        
-        await self.repository.exitDive(data.user, data.diveId)
-
-        response = { "ok": "Successfully left the dive" }
-
-        return response
+        except ( ValueError):
+            response = { "error": ValueError }

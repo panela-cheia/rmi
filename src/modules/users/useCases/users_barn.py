@@ -8,10 +8,10 @@ class UsersBarnUseCase:
         self.userRepository = userRepository
         self.barnRepository = barnRepository
 
-    async def execute(self,user_id:str):
-        user = await self.userRepository.findById(id=user_id)
+    def execute(self,user_id:str):
+        user = self.userRepository.findById(id=user_id)
 
-        barn =  await self.barnRepository.findAll(barnId=user.barn.id)
+        barn =  self.barnRepository.findAll(barnId=user.barn[0].id)
 
         if barn is None:
             return []

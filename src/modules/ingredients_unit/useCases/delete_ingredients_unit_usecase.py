@@ -4,15 +4,15 @@ class DeleleIngredientsUnitUseCase:
     def __init__(self,repository:IngredientsUnitRepository) -> None:
         self.repository = repository
 
-    async def execute(self,id:str):
+    def execute(self,id:str):
 
         try:
-            verifyIfUnitAlreadyExists = await self.repository.findById(id=id)
+            verifyIfUnitAlreadyExists = self.repository.findById(id=id)
 
             if not verifyIfUnitAlreadyExists:
                 return { "error":"This unit not exits!" }
 
-            await self.repository.delete(id=id)
+            self.repository.delete(id=id)
 
             data = { "ok": "unit deleted successfully!" }
 

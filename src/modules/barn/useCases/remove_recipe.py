@@ -6,9 +6,9 @@ class RemoveRecipeUseCase:
     def __init__(self, repository: BarnRepository):
         self.repository = repository
 
-    async def execute(self, data: RemoveRecipeDTO):
+    def execute(self, data: RemoveRecipeDTO):
         try:
-            barn =  await self.repository.removeRecipe(data=data)
+            barn =  self.repository.removeRecipe(data=data)
 
             if not barn:
                 raise ValueError("User does not exist") 
@@ -17,4 +17,4 @@ class RemoveRecipeUseCase:
 
             return response
         except (ValueError):
-            return { "error":ValueError }
+            return {"error": ValueError}

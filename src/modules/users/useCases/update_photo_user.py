@@ -7,13 +7,15 @@ class UpdatePhotoUserUseCase:
     def __init__(self,userRepository:UserRepository) -> None:
         self.userRepository = userRepository
 
-    async def execute(self, id:str,photo: str):
-
+    def execute(self, id:str,photo: str):
         try:
-            user = await self.userRepository.updatePhoto(
+            user = self.userRepository.updatePhoto(
                 id=id,
-                photo=photo
+                photo_id=photo
             )
-            return { "ok":"Successfully updated user: " + user["id"] }
+
+            print(user.__dict__)
+
+            return { "ok":"Successfully updated user: " }
         except:
             raise { "error": "An error occurred during user creation" }
