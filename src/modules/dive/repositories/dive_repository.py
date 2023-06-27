@@ -29,6 +29,12 @@ class DiveRepository:
         user = session.query(User).filter_by(id=id).first()
 
         return user
+    
+    def findByUsername(self, username):
+        session = self.orm.get_session()
+        user = session.query(User).filter_by(username=username).first()
+
+        return user
 
     def findDiveById(self, dive_id):
         session = self.orm.get_session()

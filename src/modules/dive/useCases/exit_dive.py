@@ -24,18 +24,18 @@ class ExitDiveUseCase:
             if exit_dive.owner.id == data.user and data.new_owner:
                 
                 # Verificar se o usuário existe
-                verify_new_owner_user = self.repository.findById(id=data.new_owner)
+                verify_new_owner_user = self.repository.findByUsername(username=data.new_owner)
                 if not verify_new_owner_user:
                     return { "error":"New Owner user does not exist" }
 
                 # Verificar se o usuário que está saindo é um membro do dive
-                is_member = self.repository.findUserInDive(dive_id=data.diveId,user_id=data.new_owner)
+                is_member = self.repository.findUserInDive(dive_id=data.diveId,user_id=verify_new_owner_user.id)
                 if is_member:
                     # Remover o usuário como membro do dive
                     self.repository.removeDiveMember(data.user, data.diveId)
 
                     # atualiza o owner como new_owner
-                    self.repository.updateDiveOwner(data.diveId,data.new_owner)
+                    self.repository.updateDiveOwner(data.diveId,verify_new_owner_user.id)
 
                     response = { "ok": "Successfully left the dive and this dive has a new owner!" }
                 else:
