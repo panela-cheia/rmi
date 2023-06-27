@@ -15,7 +15,7 @@ class FollowUserAdapter(object):
         self.useCase = FollowUserUseCase(userRepository=UserRepository())
 
     def execute(self,user_id:str,follow_id:str):
-        user = self.useCase.execute(user_id=user_id,follow_id=follow_id)
+        user = self.useCase.execute(user_id=follow_id,follow_id=user_id)
 
         if "error" in user:
             logger.error("{topic} - {user}",topic=Topics.USER_FOLLOW.value,user=json.dumps(user,indent=4,ensure_ascii=False))

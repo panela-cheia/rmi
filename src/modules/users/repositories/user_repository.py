@@ -205,7 +205,6 @@ class UserRepository:
         return users
 
     def searchUser(self, user_id, value):
-
         session = self.orm.get_session()
 
         users = session.query(User).filter(
@@ -224,7 +223,11 @@ class UserRepository:
         results = []
 
         for user in users:
-            common_followers = session.query(Follows).filter(Follows.following_id == user_id, Follows.follower_id == user.id).count()
+            common_followers = session.query(Follows).filter(
+                Follows.following_id == user.id,  # Use 'user.id' em vez de 'user_id'
+                Follows.follower_id == user_id
+            ).count()
+
             common_dives = session.query(UsersDive).filter(
                 UsersDive.user_id == user_id,
                 UsersDive.dive_id.in_([users_dive.dive_id for users_dive in user.users_dive])

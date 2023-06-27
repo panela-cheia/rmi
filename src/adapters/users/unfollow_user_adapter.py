@@ -15,7 +15,7 @@ class UnfollowUserAdapter(object):
         self.useCase = UnfollowUserUseCase(userRepository=UserRepository())
 
     def execute(self,user_id:str,unfollow_id:str):
-        user = self.useCase.execute(user_id=user_id,unfollow_id=unfollow_id)
+        user = self.useCase.execute(user_id=unfollow_id,unfollow_id=user_id)
 
         logger.info("{topic} - {user}",topic=Topics.USER_UNFOLLOW.value,user=json.dumps(user,indent=4,ensure_ascii=False))
 
