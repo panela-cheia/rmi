@@ -7,7 +7,7 @@ pyro:
 	pyro5-ns -n localhost
 
 venv:
-	python3 -m venv . && . bin/activate && pip3 install -r requirements.txt
+	python3 -m venv . 
 
 run_venv_pyro:
 	source bin/activate && make pyro
